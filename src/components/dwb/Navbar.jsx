@@ -94,8 +94,16 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 flex items-center h-14">
 
         {/* Logo */}
-        <Link to="/" className="font-playfair text-gold text-xl font-bold tracking-wide mr-8 shrink-0">
-          Cap-X
+        <Link to="/" className="flex items-center gap-2.5 mr-8 shrink-0">
+          <div className="h-7 w-7 rounded-full bg-white overflow-hidden flex items-center justify-center flex-shrink-0">
+            <img
+              src="/capx-bull.jpg"
+              alt="Cap-X"
+              className="h-8 w-8 object-cover object-center"
+              style={{ mixBlendMode: 'multiply' }}
+            />
+          </div>
+          <span className="font-playfair text-gold text-xl font-bold tracking-wide">Cap-X</span>
         </Link>
 
         {/* Left links */}
