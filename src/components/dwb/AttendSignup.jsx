@@ -37,7 +37,7 @@ export default function AttendSignup() {
               Attend a Session
             </h2>
             <p className="font-dm-sans text-white/55 leading-relaxed">
-              Free and open to all students. No application, no interview. Just show up.
+              Free and open to all Rutgers students. Sessions have limited capacity — pre-register now to guarantee your spot and be the first to know when the speaker is announced.
             </p>
           </FadeIn>
         </div>

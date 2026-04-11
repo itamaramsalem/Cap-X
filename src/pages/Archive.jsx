@@ -6,7 +6,7 @@ export default function Archive() {
   return (
     <div className="min-h-screen bg-cream">
       {/* Header bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-navy/10 flex items-center px-8 h-14">
+      <div className="fixed left-0 right-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-navy/10 flex items-center px-8 h-14" style={{ top: 'var(--bar-h, 0px)' }}>
         <Link to="/" className="font-playfair text-navy text-lg font-bold tracking-wide">
           Cap-X
         </Link>

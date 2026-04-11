@@ -21,7 +21,7 @@ export default function Contact() {
     <div className="min-h-screen bg-navy">
       <Navbar />
 
-      <div className="pt-14">
+      <div style={{ paddingTop: 'calc(var(--bar-h, 0px) + 56px)' }}>
         {/* Hero section */}
         <section className="bg-navy px-8 md:px-16 py-24">
           <div className="max-w-7xl mx-auto">

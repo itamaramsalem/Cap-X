@@ -30,6 +30,7 @@
     --font-playfair: 'Playfair Display', serif;
     --font-dm-sans: 'DM Sans', sans-serif;
 
+    --bar-h: 0px; /* Set to 40px by AnnouncementBar when visible */
     --navy: #1B2A4A;
     --navy-light: #243558;
     --cream: #F9F6EF;
