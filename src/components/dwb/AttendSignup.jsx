@@ -27,35 +27,33 @@ export default function AttendSignup() {
   };
 
   return (
-    <section id="attend" className="bg-navy py-0">
-      <div className="grid grid-cols-1 md:grid-cols-2 min-h-[520px]">
-        {/* Left — text */}
-        <div className="bg-navy flex items-center px-10 md:px-16 py-20">
+    <section id="attend" className="bg-white border-t border-black/10">
+      <div className="grid grid-cols-1 md:grid-cols-2">
+        {/* Left */}
+        <div className="px-8 md:px-16 py-20 border-b md:border-b-0 md:border-r border-black/10">
           <FadeIn>
-            <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-5">Reserve Your Seat</p>
-            <h2 className="font-playfair text-white text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            <p className="font-sans text-black/35 text-[10px] font-semibold uppercase tracking-[0.2em] mb-5">Reserve Your Seat</p>
+            <h2 className="font-sans font-black text-black text-3xl md:text-4xl uppercase tracking-tight leading-tight mb-6">
               Attend a Session
             </h2>
-            <p className="font-dm-sans text-white/55 leading-relaxed">
+            <p className="font-sans text-black/45 text-sm leading-relaxed">
               Free and open to all students. No application, no interview. Just show up.
             </p>
           </FadeIn>
         </div>
 
         {/* Right — form */}
-        <div className="bg-navy-light flex items-center justify-center px-10 md:px-16 py-20">
+        <div className="px-8 md:px-16 py-20 flex items-center">
           {done ? (
             <FadeIn>
-              <div className="text-center">
-                <p className="font-playfair text-white text-3xl font-bold mb-3">You're in.</p>
-                <p className="font-dm-sans text-white/50">We'll be in touch with upcoming session details.</p>
-              </div>
+              <p className="font-sans font-black text-black text-2xl uppercase tracking-tight">You're in.</p>
+              <p className="font-sans text-black/40 text-sm mt-2">We'll be in touch with upcoming session details.</p>
             </FadeIn>
           ) : (
             <FadeIn className="w-full max-w-sm">
-              <form onSubmit={handleSubmit} className="space-y-5 w-full max-w-sm">
+              <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-sm">
                 <div>
-                  <label className="font-dm-sans text-white/60 text-xs uppercase tracking-[0.15em] block mb-2">
+                  <label className="font-sans text-black/40 text-[10px] font-semibold uppercase tracking-[0.15em] block mb-2">
                     Scarlet Mail Address
                   </label>
                   <input
@@ -64,11 +62,11 @@ export default function AttendSignup() {
                     value={form.scarlet_mail}
                     onChange={e => setForm(f => ({ ...f, scarlet_mail: e.target.value }))}
                     placeholder="netid@scarletmail.rutgers.edu"
-                    className="w-full bg-navy border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-4 py-3 focus:outline-none focus:border-gold transition-colors"
+                    className="w-full border border-black/20 bg-white text-black placeholder-black/25 font-sans text-sm px-4 py-3 focus:outline-none focus:border-black transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="font-dm-sans text-white/60 text-xs uppercase tracking-[0.15em] block mb-2">
+                  <label className="font-sans text-black/40 text-[10px] font-semibold uppercase tracking-[0.15em] block mb-2">
                     NetID
                   </label>
                   <input
@@ -77,17 +75,17 @@ export default function AttendSignup() {
                     value={form.netid}
                     onChange={e => setForm(f => ({ ...f, netid: e.target.value }))}
                     placeholder="e.g. abc123"
-                    className="w-full bg-navy border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-4 py-3 focus:outline-none focus:border-gold transition-colors"
+                    className="w-full border border-black/20 bg-white text-black placeholder-black/25 font-sans text-sm px-4 py-3 focus:outline-none focus:border-black transition-colors"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] py-4 hover:bg-gold-dark transition-colors disabled:opacity-60"
+                  className="w-full bg-black text-white font-sans font-bold text-[10px] uppercase tracking-[0.15em] py-4 hover:bg-black/80 transition-colors disabled:opacity-50"
                 >
                   {loading ? 'Signing up…' : 'Sign Me Up'}
                 </button>
-                <p className="font-dm-sans text-white/30 text-xs text-center">
+                <p className="font-sans text-black/25 text-[10px] text-center uppercase tracking-wider">
                   Rutgers students only · @scarletmail.rutgers.edu required
                 </p>
               </form>

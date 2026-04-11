@@ -2,29 +2,12 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '../../api/apiClient';
 import {
-  format,
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
-  eachDayOfInterval,
-  isSameMonth,
-  isSameDay,
-  addMonths,
-  subMonths,
-  parseISO,
-  isToday,
+  format, startOfMonth, endOfMonth, startOfWeek, endOfWeek,
+  eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths,
+  parseISO, isToday,
 } from 'date-fns';
 import FadeIn from './FadeIn';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-const SECTOR_COLORS = {
-  'Finance & Trading': 'bg-gold/20 text-gold-dark',
-  'Technology & AI': 'bg-blue-100 text-blue-700',
-  'Consulting': 'bg-green-100 text-green-700',
-  'Entrepreneurship': 'bg-purple-100 text-purple-700',
-  default: 'bg-navy/10 text-navy',
-};
 
 export default function EventCalendar() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -41,86 +24,61 @@ export default function EventCalendar() {
   const days = eachDayOfInterval({ start: calStart, end: calEnd });
 
   const eventsForDay = (day) =>
-    events.filter(e => {
-      try { return isSameDay(parseISO(e.date), day); } catch { return false; }
-    });
+    events.filter(e => { try { return isSameDay(parseISO(e.date), day); } catch { return false; } });
 
   const DAY_HEADERS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <section id="schedule" className="bg-cream py-24 px-8 md:px-16">
+    <section id="schedule" className="bg-black border-t border-white/10 py-24 px-8 md:px-16">
       <div className="max-w-5xl mx-auto">
         <FadeIn>
-          <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-4">Schedule</p>
-          <h2 className="font-playfair text-navy text-4xl md:text-5xl font-bold mb-12 leading-tight">
+          <p className="font-sans text-white/30 text-[10px] font-semibold uppercase tracking-[0.2em] mb-5">Schedule</p>
+          <h2 className="font-sans font-black text-white text-3xl md:text-4xl uppercase tracking-tight mb-12">
             Upcoming Sessions &amp; Workshops
           </h2>
 
-          {/* Calendar header */}
-          <div className="border border-navy/15 rounded overflow-hidden">
-            <div className="bg-navy flex items-center justify-between px-6 py-4">
-              <button
-                onClick={() => setCurrentMonth(m => subMonths(m, 1))}
-                className="text-white/60 hover:text-white transition-colors"
-              >
-                <ChevronLeft size={18} />
+          <div className="border border-white/15">
+            {/* Month nav */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/15">
+              <button onClick={() => setCurrentMonth(m => subMonths(m, 1))} className="text-white/40 hover:text-white transition-colors">
+                <ChevronLeft size={16} />
               </button>
-              <span className="font-dm-sans text-white font-semibold text-sm tracking-wide">
+              <span className="font-sans text-white font-bold text-sm uppercase tracking-[0.15em]">
                 {format(currentMonth, 'MMMM yyyy')}
               </span>
-              <button
-                onClick={() => setCurrentMonth(m => addMonths(m, 1))}
-                className="text-white/60 hover:text-white transition-colors"
-              >
-                <ChevronRight size={18} />
+              <button onClick={() => setCurrentMonth(m => addMonths(m, 1))} className="text-white/40 hover:text-white transition-colors">
+                <ChevronRight size={16} />
               </button>
             </div>
 
             {/* Day headers */}
-            <div className="grid grid-cols-7 border-b border-navy/10 bg-white">
+            <div className="grid grid-cols-7 border-b border-white/15">
               {DAY_HEADERS.map(d => (
-                <div key={d} className="text-center font-dm-sans text-muted-text text-xs uppercase tracking-wider py-3">
+                <div key={d} className="text-center font-sans text-white/25 text-[10px] uppercase tracking-wider py-3">
                   {d}
                 </div>
               ))}
             </div>
 
-            {/* Day cells */}
-            <div className="grid grid-cols-7 bg-white">
+            {/* Days */}
+            <div className="grid grid-cols-7">
               {days.map((day, idx) => {
                 const dayEvents = eventsForDay(day);
                 const inMonth = isSameMonth(day, currentMonth);
                 const today = isToday(day);
-
                 return (
                   <div
                     key={idx}
-                    className={`min-h-[90px] border-b border-r border-navy/8 p-2 ${
-                      idx % 7 === 6 ? 'border-r-0' : ''
-                    } ${idx >= days.length - 7 ? 'border-b-0' : ''}`}
+                    className={`min-h-[80px] p-2 ${idx % 7 !== 6 ? 'border-r border-white/8' : ''} ${idx < days.length - 7 ? 'border-b border-white/8' : ''}`}
                   >
-                    <div className="flex justify-center mb-1">
-                      <span
-                        className={`font-dm-sans text-sm w-7 h-7 flex items-center justify-center rounded-full ${
-                          today
-                            ? 'bg-gold text-navy font-semibold'
-                            : inMonth
-                            ? 'text-navy'
-                            : 'text-navy/25'
-                        }`}
-                      >
-                        {format(day, 'd')}
-                      </span>
-                    </div>
-                    <div className="space-y-1">
+                    <span className={`font-sans text-xs w-6 h-6 flex items-center justify-center font-semibold ${
+                      today ? 'bg-white text-black' : inMonth ? 'text-white/70' : 'text-white/15'
+                    }`}>
+                      {format(day, 'd')}
+                    </span>
+                    <div className="mt-1 space-y-0.5">
                       {dayEvents.map(event => (
-                        <div
-                          key={event.id}
-                          className={`text-xs rounded px-1.5 py-0.5 truncate font-dm-sans ${
-                            SECTOR_COLORS[event.sector] ?? SECTOR_COLORS.default
-                          }`}
-                          title={event.title}
-                        >
+                        <div key={event.id} className="text-[10px] bg-white text-black font-bold uppercase tracking-wide px-1.5 py-0.5 truncate">
                           {event.title}
                         </div>
                       ))}

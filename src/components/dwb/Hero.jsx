@@ -15,49 +15,52 @@ export default function Hero() {
   };
 
   return (
-    <section className="min-h-screen bg-navy flex items-center px-8 md:px-16 pt-14">
-      <div className="w-full max-w-7xl mx-auto relative">
-
-        {/* Cap-X — floated top-right of the content block */}
+    <section className="min-h-screen bg-white flex flex-col pt-14">
+      {/* Bull emblem — large, centered, bleed to top */}
+      <div className="flex-1 flex items-center justify-center relative overflow-hidden">
         <FadeIn>
-          <h1 className="font-playfair text-white font-bold leading-none absolute -top-10 left-8 hidden md:block">
-            <span className="text-[clamp(4rem,10vw,9rem)]">
-              Cap-<em className="text-gold" style={{ fontStyle: 'italic' }}>X</em>
-            </span>
-          </h1>
+          <img
+            src="/capx-bull.jpg"
+            alt="Cap-X"
+            className="w-56 md:w-80 select-none"
+            style={{ mixBlendMode: 'multiply' }}
+          />
         </FadeIn>
+      </div>
 
-        {/* Headline + content */}
-        <FadeIn delay={0.1} className="max-w-2xl pt-32 md:pt-48">
-          {/* Mobile-only Cap-X */}
-          <h1 className="font-playfair text-white font-bold leading-none mb-6 md:hidden">
-            <span className="text-[clamp(4rem,16vw,7rem)]">
-              Cap-<em className="text-gold" style={{ fontStyle: 'italic' }}>X</em>
-            </span>
-          </h1>
+      {/* Bottom content block */}
+      <div className="border-t border-black/10 grid grid-cols-1 md:grid-cols-2">
+        {/* Left — headline */}
+        <div className="px-8 md:px-16 py-12 border-b md:border-b-0 md:border-r border-black/10">
+          <FadeIn>
+            <h1 className="font-sans font-black text-black text-4xl md:text-5xl leading-tight uppercase tracking-tight mb-6">
+              Where Students Meet<br />
+              <span className="text-black/40">Industry Leaders</span>
+            </h1>
+            <div className="flex items-center gap-6 flex-wrap">
+              <a
+                href="/#attend"
+                onClick={handleAttend}
+                className="bg-black text-white font-sans font-bold text-[11px] uppercase tracking-[0.15em] px-7 py-4 hover:bg-black/80 transition-colors cursor-pointer"
+              >
+                Attend a Session
+              </a>
+              <span className="font-sans text-black/35 text-xs tracking-wide">
+                Free · Open to every major.
+              </span>
+            </div>
+          </FadeIn>
+        </div>
 
-          <h2 className="font-playfair text-white text-3xl md:text-5xl font-bold leading-tight mb-6">
-            Where Students Meet{' '}
-            <em className="text-gold" style={{ fontStyle: 'italic' }}>Industry Leaders</em>
-          </h2>
-          <p className="font-dm-sans text-white/55 text-base max-w-xl mb-10 leading-relaxed">
-            Cap-X connects ambitious students with senior professionals across finance, tech,
-            consulting, and entrepreneurship — through intimate speaker series and curated networking.
-          </p>
-          <div className="flex items-center gap-6 flex-wrap">
-            <a
-              href="/#attend"
-              onClick={handleAttend}
-              className="bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-7 py-4 hover:bg-gold-dark transition-colors cursor-pointer"
-            >
-              Attend a Session
-            </a>
-            <span className="font-dm-sans text-white/40 text-sm">
-              Free &nbsp;·&nbsp; Open to every major.
-            </span>
-          </div>
-        </FadeIn>
-
+        {/* Right — subtitle */}
+        <div className="px-8 md:px-16 py-12 flex items-center">
+          <FadeIn delay={0.1}>
+            <p className="font-sans text-black/50 text-base leading-relaxed max-w-sm">
+              Cap-X connects ambitious students with senior professionals across finance, tech,
+              consulting, and entrepreneurship — through intimate speaker series and curated networking.
+            </p>
+          </FadeIn>
+        </div>
       </div>
     </section>
   );

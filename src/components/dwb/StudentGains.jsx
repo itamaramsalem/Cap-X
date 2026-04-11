@@ -2,12 +2,12 @@ import FadeIn from './FadeIn';
 
 const GAINS = [
   {
-    title: 'Perspective you can\'t buy',
-    body: 'Hear from people who\'ve actually built, led, and invested — not from textbooks or case studies written after the fact.',
+    title: "Perspective you can't buy",
+    body: "Hear from people who've actually built, led, and invested — not from textbooks or case studies written after the fact.",
   },
   {
     title: 'Better questions',
-    body: 'You don\'t know what to ask until you\'ve heard someone answer questions you didn\'t know existed.',
+    body: "You don't know what to ask until you've heard someone answer questions you didn't know existed.",
   },
   {
     title: 'Real connections',
@@ -29,18 +29,18 @@ const GAINS = [
 
 export default function StudentGains() {
   return (
-    <section id="why-come" className="bg-cream py-24 px-8 md:px-16">
+    <section id="why-come" className="bg-black border-t border-white/10 py-24 px-8 md:px-16">
       <div className="max-w-7xl mx-auto">
         <FadeIn>
-          <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-4">For Students</p>
-          <h2 className="font-playfair text-navy text-4xl md:text-5xl font-bold mb-14 leading-tight">
-            What you actually walk out with.
+          <p className="font-sans text-white/30 text-[10px] font-semibold uppercase tracking-[0.2em] mb-5">For Students</p>
+          <h2 className="font-sans font-black text-white text-3xl md:text-4xl uppercase tracking-tight leading-tight mb-14">
+            What you actually<br />walk out with.
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10">
             {GAINS.map(({ title, body }) => (
-              <div key={title} className="bg-white p-7 border border-border">
-                <h3 className="font-dm-sans text-navy text-sm font-semibold mb-3">{title}</h3>
-                <p className="font-dm-sans text-muted-text text-sm leading-relaxed">{body}</p>
+              <div key={title} className="bg-black p-8">
+                <h3 className="font-sans text-white text-sm font-bold uppercase tracking-wide mb-3">{title}</h3>
+                <p className="font-sans text-white/40 text-sm leading-relaxed">{body}</p>
               </div>
             ))}
           </div>

@@ -5,21 +5,29 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        playfair: ['var(--font-playfair)'],
-        'dm-sans': ['var(--font-dm-sans)'],
+        sans: ['Inter', 'sans-serif'],
+        // keep these as aliases so old classes still work
+        playfair: ['Inter', 'sans-serif'],
+        'dm-sans': ['Inter', 'sans-serif'],
       },
       colors: {
+        // B&W palette
+        ink: '#000000',
+        paper: '#ffffff',
+        'gray-mid': '#6b7280',
+        // legacy aliases → mapped to B&W
         navy: {
-          DEFAULT: '#1B2A4A',
-          light: '#243558',
+          DEFAULT: '#000000',
+          light: '#111111',
         },
-        cream: '#F9F6EF',
+        cream: '#f5f5f5',
         gold: {
-          DEFAULT: '#C9A84C',
-          dark: '#B8943F',
+          DEFAULT: '#000000',
+          dark: '#222222',
         },
-        'body-text': '#111827',
-        'muted-text': '#667085',
+        'body-text': '#000000',
+        'muted-text': '#6b7280',
+        // shadcn tokens
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -55,9 +63,9 @@ module.exports = {
         ring: 'hsl(var(--ring))',
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        lg: '0px',
+        md: '0px',
+        sm: '0px',
       },
       keyframes: {
         'accordion-down': {

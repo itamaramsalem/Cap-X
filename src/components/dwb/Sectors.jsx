@@ -15,17 +15,18 @@ const SECTORS = [
 
 export default function Sectors() {
   return (
-    <section id="sectors" className="bg-navy py-28 px-8 md:px-16">
+    <section id="sectors" className="bg-white border-t border-black/10 py-24 px-8 md:px-16">
       <div className="max-w-7xl mx-auto">
         <FadeIn>
-          <h2 className="font-playfair text-white text-3xl md:text-5xl font-bold mb-14 max-w-3xl leading-tight">
+          <p className="font-sans text-black/35 text-[10px] font-semibold uppercase tracking-[0.2em] mb-5">Sectors</p>
+          <h2 className="font-sans font-black text-black text-3xl md:text-4xl uppercase tracking-tight leading-tight mb-14 max-w-2xl">
             Every sector of the business world — one conversation at a time.
           </h2>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             {SECTORS.map((sector) => (
               <span
                 key={sector}
-                className="font-dm-sans text-white text-sm border border-white/25 rounded-full px-5 py-2 hover:border-white/60 transition-colors"
+                className="font-sans text-black text-xs font-semibold uppercase tracking-[0.1em] border border-black/20 px-5 py-2.5 hover:bg-black hover:text-white transition-colors cursor-default"
               >
                 {sector}
               </span>
