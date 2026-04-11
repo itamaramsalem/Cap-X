@@ -65,7 +65,7 @@ export default function Contact() {
                       <img
                         src={photo}
                         alt={name}
-                        className="w-12 h-12 object-cover object-top mb-6 grayscale"
+                        className="w-full h-48 object-cover object-top mb-6"
                       />
                     ) : (
                       <div className="w-10 h-10 border border-white/20 flex items-center justify-center mb-6">
