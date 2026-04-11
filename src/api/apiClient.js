@@ -116,10 +116,11 @@ export const integrations = {
 // ─────────────────────────────────────────────────────────────────
 export const base44 = {
   entities: {
-    Rsvp:       entity('rsvps'),
+    Member:     entity('members'),      // club pre-registration
+    EventRSVP:  entity('event_rsvps'), // RSVP to a specific session
     ClubEvent:  entity('club_events'),
-    EventRSVP:  entity('event_rsvps'),
-    User:       entity('users'),   // read-only profile table
+    Rsvp:       entity('rsvps'),
+    User:       entity('users'),
   },
   auth,
   integrations,

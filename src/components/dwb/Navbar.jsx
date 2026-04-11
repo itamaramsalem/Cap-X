@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Lock } from 'lucide-react';
+import { supabase } from '../../api/apiClient';
 
 const LEFT_LINKS = [
   { to: '/#speakers', label: 'SPEAKERS', anchor: 'speakers' },
@@ -49,7 +50,7 @@ function NavLink({ to, label, anchor, onClick, activeSection, isPathActive }) {
     <a
       href={to}
       onClick={handleClick}
-      className={`relative font-dm-sans text-xs tracking-[0.15em] transition-colors duration-200 cursor-pointer pb-0.5 ${
+      className={`relative flex items-center font-dm-sans text-xs tracking-[0.15em] transition-colors duration-200 cursor-pointer pb-0.5 ${
         isActive ? 'text-gold' : 'text-white/55 hover:text-white'
       }`}
     >
@@ -86,14 +87,14 @@ function AttendDropdown({ link, activeSection }) {
 
   return (
     <div
-      className="relative"
+      className="relative flex items-center"
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
     >
       <a
         href={link.to}
         onClick={(e) => { e.preventDefault(); scrollTo(link.anchor); }}
-        className={`relative font-dm-sans text-xs tracking-[0.15em] transition-colors duration-200 cursor-pointer pb-0.5 ${
+        className={`relative flex items-center font-dm-sans text-xs tracking-[0.15em] transition-colors duration-200 cursor-pointer pb-0.5 ${
           isActive ? 'text-gold' : 'text-white/55 hover:text-white'
         }`}
       >
@@ -135,7 +136,18 @@ function AttendDropdown({ link, activeSection }) {
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAdmin(!!session);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setIsAdmin(!!session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Track active section via IntersectionObserver (home page only)
   useEffect(() => {
@@ -212,9 +224,18 @@ export default function Navbar() {
           )}
         </div>
 
+        {/* Admin button */}
+        <Link
+          to={isAdmin ? '/admin' : '/admin/login'}
+          className="ml-4 flex items-center text-white/20 hover:text-white/50 transition-colors"
+          aria-label="Admin"
+        >
+          <Lock size={13} />
+        </Link>
+
         {/* Mobile toggle */}
         <button
-          className="md:hidden text-white/70 hover:text-white ml-auto transition-colors"
+          className="md:hidden text-white/70 hover:text-white ml-4 transition-colors"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >

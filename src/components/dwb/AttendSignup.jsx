@@ -1,29 +1,11 @@
-import { useState } from 'react';
 import FadeIn from './FadeIn';
-import { base44 } from '../../api/apiClient';
-import { useToast } from '../ui/use-toast';
+import { Link } from 'react-router-dom';
+import { CalendarCheck } from 'lucide-react';
 
 export default function AttendSignup() {
-  const [form, setForm] = useState({ scarlet_mail: '', netid: '' });
-  const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
-  const { toast } = useToast();
-
-  const handleSubmit = async (e) => {
+  const scrollToSpeakers = (e) => {
     e.preventDefault();
-    if (!form.scarlet_mail.endsWith('@scarletmail.rutgers.edu')) {
-      toast({ title: 'Invalid email', description: 'Please use your @scarletmail.rutgers.edu address.', variant: 'destructive' });
-      return;
-    }
-    setLoading(true);
-    try {
-      await base44.entities.Rsvp.create({ ...form, speaker_id: 'general' });
-      setDone(true);
-    } catch (err) {
-      toast({ title: 'Something went wrong', description: err.message, variant: 'destructive' });
-    } finally {
-      setLoading(false);
-    }
+    document.getElementById('speakers')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -32,67 +14,45 @@ export default function AttendSignup() {
         {/* Left — text */}
         <div className="bg-navy flex items-center px-10 md:px-16 py-20">
           <FadeIn>
-            <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-5">Reserve Your Seat</p>
+            <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-5">Sessions</p>
             <h2 className="font-playfair text-white text-4xl md:text-5xl font-bold mb-6 leading-tight">
               Attend a Session
             </h2>
             <p className="font-dm-sans text-white/55 leading-relaxed">
-              Free and open to all Rutgers students. Sessions have limited capacity — pre-register now to guarantee your spot and be the first to know when the speaker is announced.
+              Each Cap-X session is free and open to all Rutgers students. Seats are limited —
+              RSVP directly on the speaker card once a session is announced. Sessions are added
+              on a rolling basis throughout the semester.
             </p>
           </FadeIn>
         </div>
 
-        {/* Right — form */}
+        {/* Right — CTA */}
         <div className="bg-navy-light flex items-center justify-center px-10 md:px-16 py-20">
-          {done ? (
-            <FadeIn>
-              <div className="text-center">
-                <p className="font-playfair text-white text-3xl font-bold mb-3">You're in.</p>
-                <p className="font-dm-sans text-white/50">We'll be in touch with upcoming session details.</p>
-              </div>
-            </FadeIn>
-          ) : (
-            <FadeIn className="w-full max-w-sm">
-              <form onSubmit={handleSubmit} className="space-y-5 w-full max-w-sm">
-                <div>
-                  <label className="font-dm-sans text-white/60 text-xs uppercase tracking-[0.15em] block mb-2">
-                    Scarlet Mail Address
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={form.scarlet_mail}
-                    onChange={e => setForm(f => ({ ...f, scarlet_mail: e.target.value }))}
-                    placeholder="netid@scarletmail.rutgers.edu"
-                    className="w-full bg-navy border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-4 py-3 focus:outline-none focus:border-gold transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="font-dm-sans text-white/60 text-xs uppercase tracking-[0.15em] block mb-2">
-                    NetID
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={form.netid}
-                    onChange={e => setForm(f => ({ ...f, netid: e.target.value }))}
-                    placeholder="e.g. abc123"
-                    className="w-full bg-navy border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-4 py-3 focus:outline-none focus:border-gold transition-colors"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] py-4 hover:bg-gold-dark transition-colors disabled:opacity-60"
+          <FadeIn>
+            <div className="text-center">
+              <CalendarCheck size={36} className="text-gold mx-auto mb-5" />
+              <p className="font-playfair text-white text-2xl font-bold mb-3">Sessions Coming Fall 2026</p>
+              <p className="font-dm-sans text-white/50 text-sm max-w-xs mx-auto mb-8">
+                RSVP buttons will appear on each speaker card once a session is confirmed.
+                Check the schedule above, or join the club to be notified first.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a
+                  href="#speakers"
+                  onClick={scrollToSpeakers}
+                  className="w-full sm:w-auto bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-7 py-4 hover:bg-gold-dark transition-colors text-center"
                 >
-                  {loading ? 'Signing up…' : 'Sign Me Up'}
-                </button>
-                <p className="font-dm-sans text-white/30 text-xs text-center">
-                  Rutgers students only · @scarletmail.rutgers.edu required
-                </p>
-              </form>
-            </FadeIn>
-          )}
+                  View Schedule
+                </a>
+                <Link
+                  to="/join"
+                  className="w-full sm:w-auto border border-white/20 text-white font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-7 py-4 hover:border-white/40 transition-colors text-center"
+                >
+                  Join the Club
+                </Link>
+              </div>
+            </div>
+          </FadeIn>
         </div>
       </div>
     </section>

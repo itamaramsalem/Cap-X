@@ -30,9 +30,7 @@ const GAINS = [
 
 const containerVariants = {
   hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.08 },
-  },
+  visible: { transition: { staggerChildren: 0.08 } },
 };
 
 const cardVariants = {
@@ -44,6 +42,35 @@ const cardVariants = {
   },
 };
 
+function FlipCard({ title, body }) {
+  return (
+    <motion.div
+      variants={cardVariants}
+      className="h-48 group"
+      style={{ perspective: '1200px' }}
+    >
+      <div
+        className="relative w-full h-full [transform-style:preserve-3d] [transition:transform_0.6s_ease] group-hover:[transform:rotateY(180deg)]"
+        style={{ willChange: 'transform' }}
+      >
+        {/* Front — navy cover with centered title */}
+        <div
+          className="absolute inset-0 bg-navy flex items-center justify-center p-7 border border-white/10 [backface-visibility:hidden]"
+        >
+          <h3 className="font-dm-sans text-white text-lg font-bold text-center leading-snug">{title}</h3>
+        </div>
+
+        {/* Back — white with body text */}
+        <div
+          className="absolute inset-0 bg-white flex items-center p-7 border border-gold/40 [backface-visibility:hidden] [transform:rotateY(180deg)]"
+        >
+          <p className="font-dm-sans text-navy text-sm leading-relaxed">{body}</p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function StudentGains() {
   return (
     <section id="why-come" className="bg-cream py-24 px-8 md:px-16">
@@ -51,7 +78,7 @@ export default function StudentGains() {
         <FadeIn>
           <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-4">For Students</p>
           <h2 className="font-playfair text-navy text-4xl md:text-5xl font-bold mb-14 leading-tight">
-            What you actually walk out with.
+            What You Stand to Gain.
           </h2>
         </FadeIn>
 
@@ -63,17 +90,7 @@ export default function StudentGains() {
           viewport={{ once: true, margin: '-60px' }}
         >
           {GAINS.map(({ title, body }) => (
-            <motion.div
-              key={title}
-              variants={cardVariants}
-              whileHover={{ y: -5, transition: { duration: 0.2, ease: 'easeOut' } }}
-              className="bg-white p-7 border border-border hover:border-gold/50 hover:shadow-lg transition-[border-color,box-shadow] duration-300 cursor-default group"
-            >
-              {/* Expanding gold accent line */}
-              <div className="w-5 h-0.5 bg-gold mb-5 group-hover:w-12 transition-[width] duration-300 ease-out" />
-              <h3 className="font-dm-sans text-navy text-sm font-semibold mb-3">{title}</h3>
-              <p className="font-dm-sans text-muted-text text-sm leading-relaxed">{body}</p>
-            </motion.div>
+            <FlipCard key={title} title={title} body={body} />
           ))}
         </motion.div>
       </div>
