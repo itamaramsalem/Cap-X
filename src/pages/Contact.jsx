@@ -11,7 +11,7 @@ const CONTACT_INFO = [
 
 const TEAM = [
   { name: 'Dan Rosenboim', role: 'President', email: 'dir21@scarletmail.rutgers.edu', initial: 'D' },
-  { name: 'Itamar Amsalem', role: 'Vice President', email: 'iea25@scarletmail.rutgers.edu', initial: 'I' },
+  { name: 'Itamar Amsalem', role: 'Vice President', email: 'iea25@scarletmail.rutgers.edu', initial: 'I', photo: '/itamar.jpg' },
   { name: 'Jonathan Rotstein', role: 'Treasurer', email: 'Jr2171@scarletmail.rutgers.edu', initial: 'J' },
   { name: 'Adam Rosenman', role: 'Secretary', email: 'ar2410@scarletmail.rutgers.edu', initial: 'A' },
 ];
@@ -59,11 +59,19 @@ export default function Contact() {
               <h2 className="font-sans font-black text-white text-4xl uppercase tracking-tight mb-12">Our Team</h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10">
-                {TEAM.map(({ name, role, email, initial }) => (
+                {TEAM.map(({ name, role, email, initial, photo }) => (
                   <div key={name} className="bg-black p-8">
-                    <div className="w-10 h-10 border border-white/20 flex items-center justify-center mb-6">
-                      <span className="font-sans text-white font-black text-base">{initial}</span>
-                    </div>
+                    {photo ? (
+                      <img
+                        src={photo}
+                        alt={name}
+                        className="w-12 h-12 object-cover object-top mb-6 grayscale"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 border border-white/20 flex items-center justify-center mb-6">
+                        <span className="font-sans text-white font-black text-base">{initial}</span>
+                      </div>
+                    )}
                     <p className="font-sans text-white font-bold text-base uppercase tracking-wide mb-1">{name}</p>
                     <p className="font-sans text-white/35 text-[10px] font-semibold uppercase tracking-[0.15em] mb-4">{role}</p>
                     <a
