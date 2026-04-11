@@ -10,8 +10,8 @@ const CONTACT_INFO = [
 ];
 
 const TEAM = [
-  { name: 'Dan Rosenboim', role: 'President', email: 'dir21@scarletmail.rutgers.edu', initial: 'D' },
-  { name: 'Itamar Amsalem', role: 'Vice President', email: 'iea25@scarletmail.rutgers.edu', initial: 'I' },
+  { name: 'Dan Rosenboim', role: 'President', email: 'dir21@scarletmail.rutgers.edu', initial: 'D', photo: '/dan-rosenboim.jpg' },
+  { name: 'Itamar Amsalem', role: 'Vice President', email: 'iea25@scarletmail.rutgers.edu', initial: 'I', photo: '/itamar-amsalem.jpg' },
   { name: 'Jonathan Rotstein', role: 'Treasurer', email: 'Jr2171@scarletmail.rutgers.edu', initial: 'J' },
   { name: 'Adam Rosenman', role: 'Secretary', email: 'ar2410@scarletmail.rutgers.edu', initial: 'A' },
 ];
@@ -61,12 +61,16 @@ export default function Contact() {
               <h2 className="font-playfair text-white text-4xl font-bold mb-12">Our Team</h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {TEAM.map(({ name, role, email, initial }) => (
+                {TEAM.map(({ name, role, email, initial, photo }) => (
                   <div key={name} className="border border-white/12 p-6">
-                    {/* Initial circle */}
-                    <div className="w-12 h-12 rounded-full bg-navy-light border border-white/20 flex items-center justify-center mb-5">
-                      <span className="font-playfair text-gold text-lg font-bold">{initial}</span>
-                    </div>
+                    {/* Avatar */}
+                    {photo ? (
+                      <img src={photo} alt={name} className="w-12 h-12 rounded-full object-cover mb-5" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-navy-light border border-white/20 flex items-center justify-center mb-5">
+                        <span className="font-playfair text-gold text-lg font-bold">{initial}</span>
+                      </div>
+                    )}
                     <p className="font-playfair text-white text-lg font-bold mb-1">{name}</p>
                     <p className="font-dm-sans text-gold text-xs uppercase tracking-widest mb-4">{role}</p>
                     <a
