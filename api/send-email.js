@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
   const { to, subject, body, html, from_name } = req.body;
   const { error } = await resend.emails.send({
-    from: `${from_name ?? 'Cap-X'} <noreply@capxrutgers.com>`,
+    from: `${from_name ?? 'Cap-X'} <team@capxrutgers.com>`,
     to,
     subject,
     ...(html ? { html } : { text: body }),
