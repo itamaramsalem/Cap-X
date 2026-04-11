@@ -1,9 +1,139 @@
 import { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import { base44 } from '../../api/apiClient';
+import { base44, integrations } from '../../api/apiClient';
 import { useToast } from '../ui/use-toast';
 import { format, parseISO } from 'date-fns';
+
+function rsvpConfirmationEmail({ name, email, speaker }) {
+  const firstName = name.split(' ')[0];
+  const dateStr = speaker.date ? format(parseISO(speaker.date), 'EEEE, MMMM d, yyyy') : null;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RSVP Confirmed</title>
+</head>
+<body style="margin:0;padding:0;background:#0a0f1e;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0f1e;padding:48px 16px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+          <!-- Header -->
+          <tr>
+            <td style="padding-bottom:32px;" align="center">
+              <p style="margin:0;font-size:22px;font-weight:700;color:#c9a84c;letter-spacing:0.08em;">CAP-X</p>
+              <p style="margin:4px 0 0;font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.2em;text-transform:uppercase;">Rutgers University</p>
+            </td>
+          </tr>
+
+          <!-- Card -->
+          <tr>
+            <td style="background:#111827;border:1px solid rgba(255,255,255,0.1);padding:48px 40px;">
+
+              <!-- Gold rule -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+                <tr><td style="height:2px;background:#c9a84c;width:40px;"></td></tr>
+              </table>
+
+              <p style="margin:0 0 8px;font-size:24px;font-weight:700;color:#ffffff;">You're confirmed, ${firstName}.</p>
+              <p style="margin:0 0 32px;font-size:15px;color:rgba(255,255,255,0.55);line-height:1.7;">
+                Your RSVP for the upcoming Cap-X session has been received. We'll send you
+                a reminder with full details as the date approaches.
+              </p>
+
+              <!-- Session details -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;border:1px solid rgba(255,255,255,0.08);">
+                <tr>
+                  <td colspan="2" style="padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.08);">
+                    <p style="margin:0;font-size:10px;color:#c9a84c;letter-spacing:0.2em;text-transform:uppercase;">Session Details</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.06);width:40%;">
+                    <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;">Speaker</p>
+                  </td>
+                  <td style="padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <p style="margin:0;font-size:13px;color:#ffffff;">${speaker.name}</p>
+                  </td>
+                </tr>
+                ${speaker.title ? `
+                <tr>
+                  <td style="padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;">Title</p>
+                  </td>
+                  <td style="padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <p style="margin:0;font-size:13px;color:#ffffff;">${speaker.title}</p>
+                  </td>
+                </tr>` : ''}
+                ${dateStr ? `
+                <tr>
+                  <td style="padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;">Date</p>
+                  </td>
+                  <td style="padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <p style="margin:0;font-size:13px;color:#ffffff;">${dateStr}</p>
+                  </td>
+                </tr>` : ''}
+                <tr>
+                  <td style="padding:12px 20px;">
+                    <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;">Registered As</p>
+                  </td>
+                  <td style="padding:12px 20px;">
+                    <p style="margin:0;font-size:13px;color:#ffffff;">${name} · ${email}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 12px;font-size:11px;color:#c9a84c;letter-spacing:0.2em;text-transform:uppercase;">Good to Know</p>
+              ${[
+                'Seats are limited — your spot is reserved',
+                'Location details will be sent closer to the date',
+                'Reach out to team@capxrutgers.com with any questions',
+              ].map(item => `
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
+                <tr>
+                  <td width="16" valign="top">
+                    <div style="width:4px;height:4px;background:#c9a84c;border-radius:50%;margin-top:6px;"></div>
+                  </td>
+                  <td style="padding-left:10px;">
+                    <p style="margin:0;font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;">${item}</p>
+                  </td>
+                </tr>
+              </table>`).join('')}
+
+              <!-- CTA -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:36px;">
+                <tr>
+                  <td>
+                    <a href="https://capxrutgers.com" style="display:inline-block;background:#c9a84c;color:#0a0f1e;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;text-decoration:none;padding:14px 28px;">
+                      Visit Cap-X
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:28px 0;" align="center">
+              <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.25);">
+                Cap-X · Rutgers University · <a href="mailto:team@capxrutgers.com" style="color:rgba(255,255,255,0.25);text-decoration:none;">team@capxrutgers.com</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
 
 export default function RsvpModal({ speaker, onClose }) {
   const [form, setForm] = useState({ name: '', email: '' });
@@ -16,6 +146,12 @@ export default function RsvpModal({ speaker, onClose }) {
     setLoading(true);
     try {
       await base44.entities.Rsvp.create({ ...form, speaker_id: speaker.id });
+      integrations.Core.SendEmail({
+        to: form.email,
+        subject: `RSVP Confirmed — ${speaker.name} at Cap-X`,
+        from_name: 'Cap-X Rutgers',
+        html: rsvpConfirmationEmail({ name: form.name, email: form.email, speaker }),
+      }).catch(() => {});
       setDone(true);
       toast({ title: 'RSVP confirmed!', description: `See you at the ${speaker.name} event.` });
     } catch (err) {
