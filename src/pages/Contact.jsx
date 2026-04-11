@@ -12,7 +12,7 @@ const CONTACT_INFO = [
 const TEAM = [
   { name: 'Dan Rosenboim', role: 'President', email: 'dir21@scarletmail.rutgers.edu', initial: 'D', photo: '/dan-rosenboim.jpg' },
   { name: 'Itamar Amsalem', role: 'Vice President', email: 'iea25@scarletmail.rutgers.edu', initial: 'I', photo: '/itamar-amsalem.jpg' },
-  { name: 'Jonathan Rotstein', role: 'Treasurer', email: 'Jr2171@scarletmail.rutgers.edu', initial: 'J' },
+  { name: 'Jonathan Rotstein', role: 'Treasurer', email: 'Jr2171@scarletmail.rutgers.edu', initial: 'J', photo: '/jonathan-rotstein.jpg' },
   { name: 'Adam Rosenman', role: 'Secretary', email: 'ar2410@scarletmail.rutgers.edu', initial: 'A', photo: '/adam-rosenman.jpg' },
 ];
 
