@@ -24,78 +24,105 @@ function confirmationEmail({ first_name, last_name, email, netid, major, graduat
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Welcome to Cap-X</title>
 </head>
-<body style="margin:0;padding:0;background:#0a0f1e;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0f1e;padding:48px 16px;">
+<body style="margin:0;padding:0;background:#f4f4f5;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:48px 16px;">
     <tr>
       <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <table width="580" cellpadding="0" cellspacing="0" style="max-width:580px;width:100%;">
 
-          <!-- Header -->
+          <!-- Logo header -->
           <tr>
-            <td style="padding-bottom:32px;" align="center">
-              <p style="margin:0;font-size:22px;font-weight:700;color:#c9a84c;letter-spacing:0.08em;">CAP-X</p>
-              <p style="margin:4px 0 0;font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.2em;text-transform:uppercase;">Rutgers University</p>
+            <td align="center" style="padding-bottom:28px;">
+              <table cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background:#0a0f1e;padding:14px 28px;">
+                    <p style="margin:0;font-size:20px;font-weight:800;color:#c9a84c;letter-spacing:0.12em;text-transform:uppercase;">CAP&#8209;X</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding-top:8px;">
+                    <p style="margin:0;font-size:10px;color:#6b7280;letter-spacing:0.18em;text-transform:uppercase;">Rutgers University</p>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
 
-          <!-- Card -->
+          <!-- Hero banner -->
           <tr>
-            <td style="background:#111827;border:1px solid rgba(255,255,255,0.1);padding:48px 40px;">
-
-              <!-- Gold rule -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
-                <tr><td style="height:2px;background:#c9a84c;width:40px;"></td></tr>
+            <td style="background:#0a0f1e;padding:48px 48px 0;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="border-left:3px solid #c9a84c;padding-left:20px;padding-bottom:40px;">
+                    <p style="margin:0 0 6px;font-size:11px;color:#c9a84c;letter-spacing:0.22em;text-transform:uppercase;">Founding Member</p>
+                    <p style="margin:0;font-size:32px;font-weight:700;color:#ffffff;line-height:1.2;">You're in, ${first_name}.</p>
+                  </td>
+                </tr>
               </table>
+            </td>
+          </tr>
 
-              <p style="margin:0 0 8px;font-size:24px;font-weight:700;color:#ffffff;">You're in, ${first_name}.</p>
-              <p style="margin:0 0 32px;font-size:15px;color:rgba(255,255,255,0.55);line-height:1.7;">
+          <!-- Gold divider -->
+          <tr>
+            <td style="background:#0a0f1e;padding:0 48px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr><td style="height:1px;background:#c9a84c;opacity:0.3;"></td></tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="background:#0a0f1e;padding:36px 48px 48px;">
+              <p style="margin:0 0 32px;font-size:15px;color:rgba(255,255,255,0.6);line-height:1.8;">
                 Welcome to Cap-X at Rutgers. You've been pre-registered as a founding member —
                 giving you first access to every session, exclusive networking events, and direct
                 introductions to industry leaders.
               </p>
 
-              <!-- Registration details -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;border:1px solid rgba(255,255,255,0.08);">
+              <!-- Details box -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:36px;background:#111827;border:1px solid rgba(255,255,255,0.08);">
                 <tr>
-                  <td colspan="2" style="padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.08);">
-                    <p style="margin:0;font-size:10px;color:#c9a84c;letter-spacing:0.2em;text-transform:uppercase;">Registration Details</p>
+                  <td style="padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.08);">
+                    <p style="margin:0;font-size:9px;font-weight:700;color:#c9a84c;letter-spacing:0.25em;text-transform:uppercase;">Registration Details</p>
                   </td>
                 </tr>
-                ${details.map(([label, value]) => `
+                ${details.map(([label, value], i) => `
                 <tr>
-                  <td style="padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.06);width:40%;">
-                    <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;">${label}</p>
+                  <td style="padding:13px 24px;${i < details.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,0.05);' : ''}width:38%;">
+                    <p style="margin:0;font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.12em;text-transform:uppercase;">${label}</p>
                   </td>
-                  <td style="padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
-                    <p style="margin:0;font-size:13px;color:#ffffff;">${value}</p>
+                  <td style="padding:13px 24px;${i < details.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,0.05);' : ''}">
+                    <p style="margin:0;font-size:13px;font-weight:500;color:#ffffff;">${value}</p>
                   </td>
                 </tr>`).join('')}
               </table>
 
-              <!-- What's next -->
-              <p style="margin:0 0 12px;font-size:11px;color:#c9a84c;letter-spacing:0.2em;text-transform:uppercase;">What to Expect</p>
-              ${[
-                'Session invites sent directly to this email',
-                'Exclusive founding member networking events',
-                'Early access to speaker announcements',
-              ].map(item => `
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
+              <!-- What to expect -->
+              <p style="margin:0 0 16px;font-size:9px;font-weight:700;color:#c9a84c;letter-spacing:0.25em;text-transform:uppercase;">What to Expect</p>
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:36px;">
+                ${[
+                  ['Priority invites', 'Session announcements sent directly to this email before anyone else.'],
+                  ['Exclusive networking', 'Access to founding member events with speakers and industry professionals.'],
+                  ['Early access', 'First to know about new speakers, workshops, and Cap-X updates.'],
+                ].map(([title, desc]) => `
                 <tr>
-                  <td width="16" valign="top" style="padding-top:2px;">
-                    <div style="width:4px;height:4px;background:#c9a84c;border-radius:50%;margin-top:6px;"></div>
+                  <td valign="top" width="20" style="padding:10px 0;">
+                    <table cellpadding="0" cellspacing="0"><tr><td style="width:6px;height:6px;background:#c9a84c;border-radius:50%;margin-top:5px;"></td></tr></table>
                   </td>
-                  <td style="padding-left:10px;">
-                    <p style="margin:0;font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;">${item}</p>
+                  <td style="padding:10px 0 10px 12px;border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <p style="margin:0 0 2px;font-size:13px;font-weight:600;color:#ffffff;">${title}</p>
+                    <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;">${desc}</p>
                   </td>
-                </tr>
-              </table>`).join('')}
+                </tr>`).join('')}
+              </table>
 
               <!-- CTA -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:36px;">
+              <table cellpadding="0" cellspacing="0">
                 <tr>
-                  <td>
-                    <a href="https://capxrutgers.com" style="display:inline-block;background:#c9a84c;color:#0a0f1e;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;text-decoration:none;padding:14px 28px;">
-                      Visit Cap-X
+                  <td style="background:#c9a84c;">
+                    <a href="https://capxrutgers.com" style="display:inline-block;padding:14px 32px;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:#0a0f1e;text-decoration:none;">
+                      Visit Cap-X &rarr;
                     </a>
                   </td>
                 </tr>
@@ -105,10 +132,23 @@ function confirmationEmail({ first_name, last_name, email, netid, major, graduat
 
           <!-- Footer -->
           <tr>
-            <td style="padding:28px 0;" align="center">
-              <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.25);">
-                Cap-X · Rutgers University · <a href="mailto:team@capxrutgers.com" style="color:rgba(255,255,255,0.25);text-decoration:none;">team@capxrutgers.com</a>
-              </p>
+            <td style="background:#070c18;padding:24px 48px;" align="center">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding-bottom:12px;">
+                    <p style="margin:0;font-size:16px;font-weight:800;color:#c9a84c;letter-spacing:0.12em;">CAP&#8209;X</p>
+                    <p style="margin:2px 0 0;font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.15em;text-transform:uppercase;">Rutgers University</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 0;border-top:1px solid rgba(255,255,255,0.07);" align="center">
+                    <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.2);">
+                      Questions? Reply to this email or reach us at
+                      <a href="mailto:team@capxrutgers.com" style="color:#c9a84c;text-decoration:none;">team@capxrutgers.com</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
 
