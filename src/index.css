@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 42 52% 54%;
+    --primary-foreground: 220 43% 20%;
+    --secondary: 40 33% 95%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 40 33% 95%;
+    --muted-foreground: 218 14% 46%;
+    --accent: 220 43% 20%;
+    --accent-foreground: 40 33% 95%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 20% 82%;
+    --input: 220 20% 82%;
+    --ring: 42 52% 54%;
+    --radius: 0.5rem;
+
+    --font-playfair: 'Playfair Display', serif;
+    --font-dm-sans: 'DM Sans', sans-serif;
+
+    --navy: #1B2A4A;
+    --navy-light: #243558;
+    --cream: #F9F6EF;
+    --gold: #C9A84C;
+    --gold-dark: #B8943F;
+    --body-text: #111827;
+    --muted-text: #667085;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-dm-sans);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}

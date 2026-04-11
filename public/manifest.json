@@ -1,0 +1,9 @@
+{
+  "name": "Cap-X",
+  "short_name": "Cap-X",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1B2A4A",
+  "theme_color": "#C9A84C",
+  "icons": []
+}

@@ -1,0 +1,101 @@
+import { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
+
+const LEFT_LINKS = [
+  { to: '/#speakers', label: 'SPEAKERS', anchor: 'speakers' },
+  { to: '/archive', label: 'ARCHIVE' },
+];
+
+const RIGHT_LINKS = [
+  { to: '/contact', label: 'CONTACT' },
+  { to: '/#format', label: 'FORMAT', anchor: 'format' },
+  { to: '/#why-come', label: 'WHY COME', anchor: 'why-come' },
+  { to: '/#sectors', label: 'SECTORS', anchor: 'sectors' },
+  { to: '/#attend', label: 'ATTEND', anchor: 'attend' },
+];
+
+function NavLink({ to, label, anchor, onClick }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleClick = (e) => {
+    if (anchor) {
+      e.preventDefault();
+      if (location.pathname !== '/') {
+        navigate('/');
+        setTimeout(() => {
+          document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      } else {
+        document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    onClick?.();
+  };
+
+  const isActive = anchor
+    ? false
+    : location.pathname === to;
+
+  return (
+    <a
+      href={to}
+      onClick={handleClick}
+      className={`font-dm-sans text-xs tracking-[0.15em] transition-colors cursor-pointer ${
+        isActive ? 'text-gold' : 'text-white/60 hover:text-white'
+      }`}
+    >
+      {label}
+    </a>
+  );
+}
+
+export default function Navbar() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-navy/95 backdrop-blur-sm border-b border-white/10">
+      <div className="max-w-7xl mx-auto px-6 flex items-center h-14">
+        {/* Logo */}
+        <Link to="/" className="font-playfair text-gold text-xl font-bold tracking-wide mr-8">
+          Cap-X
+        </Link>
+
+        {/* Left links */}
+        <div className="hidden md:flex items-center gap-6">
+          {LEFT_LINKS.map(link => (
+            <NavLink key={link.label} {...link} />
+          ))}
+        </div>
+
+        {/* Spacer */}
+        <div className="flex-1" />
+
+        {/* Right links */}
+        <div className="hidden md:flex items-center gap-6">
+          {RIGHT_LINKS.map(link => (
+            <NavLink key={link.label} {...link} />
+          ))}
+        </div>
+
+        {/* Mobile toggle */}
+        <button
+          className="md:hidden text-white/70 hover:text-white ml-auto"
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <X size={18} /> : <Menu size={18} />}
+        </button>
+      </div>
+
+      {/* Mobile menu */}
+      {open && (
+        <div className="md:hidden bg-navy border-t border-white/10 px-6 py-5 flex flex-col gap-4">
+          {[...LEFT_LINKS, ...RIGHT_LINKS].map(link => (
+            <NavLink key={link.label} {...link} onClick={() => setOpen(false)} />
+          ))}
+        </div>
+      )}
+    </nav>
+  );
+}
