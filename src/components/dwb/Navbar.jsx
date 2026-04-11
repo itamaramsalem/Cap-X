@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 
 const LEFT_LINKS = [
@@ -15,9 +16,11 @@ const RIGHT_LINKS = [
   { to: '/#attend', label: 'ATTEND', anchor: 'attend' },
 ];
 
-function NavLink({ to, label, anchor, onClick }) {
-  const location = useLocation();
+const ALL_ANCHORS = ['speakers', 'format', 'why-come', 'sectors', 'attend'];
+
+function NavLink({ to, label, anchor, onClick, activeSection, isPathActive }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleClick = (e) => {
     if (anchor) {
@@ -34,36 +37,74 @@ function NavLink({ to, label, anchor, onClick }) {
     onClick?.();
   };
 
-  const isActive = !anchor && location.pathname === to;
+  const isActive = anchor ? activeSection === anchor : isPathActive;
 
   return (
     <a
       href={to}
       onClick={handleClick}
-      className={`font-sans text-[11px] font-semibold tracking-[0.12em] transition-colors cursor-pointer ${
-        isActive ? 'text-black' : 'text-black/40 hover:text-black'
+      className={`relative font-sans text-[11px] font-semibold tracking-[0.12em] transition-colors duration-150 cursor-pointer pb-0.5 ${
+        isActive ? 'text-black' : 'text-black/35 hover:text-black'
       }`}
     >
       {label}
+      {isActive && (
+        <motion.span
+          layoutId="bw-nav-underline"
+          className="absolute bottom-0 left-0 right-0 h-px bg-black"
+          transition={{ type: 'spring', stiffness: 380, damping: 35 }}
+        />
+      )}
     </a>
   );
 }
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname !== '/') {
+      setActiveSection(null);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: '-30% 0px -60% 0px' }
+    );
+    ALL_ANCHORS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+    return () => obs.disconnect();
+  }, [location.pathname]);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-black/10">
       <div className="max-w-7xl mx-auto px-6 flex items-center h-14">
+
         {/* Logo */}
-        <Link to="/" className="font-sans text-black text-base font-black tracking-[0.05em] uppercase mr-10">
+        <Link
+          to="/"
+          className="font-sans text-black text-base font-black tracking-[0.05em] uppercase mr-10 shrink-0"
+        >
           CAP-X
         </Link>
 
         {/* Left links */}
         <div className="hidden md:flex items-center gap-7">
-          {LEFT_LINKS.map(link => (
-            <NavLink key={link.label} {...link} />
+          {LEFT_LINKS.map((link) => (
+            <NavLink
+              key={link.label}
+              {...link}
+              activeSection={activeSection}
+              isPathActive={location.pathname === link.to}
+            />
           ))}
         </div>
 
@@ -71,27 +112,50 @@ export default function Navbar() {
 
         {/* Right links */}
         <div className="hidden md:flex items-center gap-7">
-          {RIGHT_LINKS.map(link => (
-            <NavLink key={link.label} {...link} />
+          {RIGHT_LINKS.map((link) => (
+            <NavLink
+              key={link.label}
+              {...link}
+              activeSection={activeSection}
+              isPathActive={location.pathname === link.to}
+            />
           ))}
         </div>
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden text-black/60 hover:text-black ml-auto"
+          className="md:hidden text-black/50 hover:text-black ml-auto transition-colors"
           onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
         >
           {open ? <X size={18} /> : <Menu size={18} />}
         </button>
       </div>
 
-      {open && (
-        <div className="md:hidden bg-white border-t border-black/10 px-6 py-5 flex flex-col gap-4">
-          {[...LEFT_LINKS, ...RIGHT_LINKS].map(link => (
-            <NavLink key={link.label} {...link} onClick={() => setOpen(false)} />
-          ))}
-        </div>
-      )}
+      {/* Animated mobile menu */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.22, ease: 'easeInOut' }}
+            className="md:hidden bg-white border-t border-black/10 overflow-hidden"
+          >
+            <div className="px-6 py-5 flex flex-col gap-5">
+              {[...LEFT_LINKS, ...RIGHT_LINKS].map((link) => (
+                <NavLink
+                  key={link.label}
+                  {...link}
+                  activeSection={activeSection}
+                  isPathActive={location.pathname === link.to}
+                  onClick={() => setOpen(false)}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

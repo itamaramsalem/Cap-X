@@ -1,9 +1,12 @@
+import { motion } from 'framer-motion';
 import FadeIn from './FadeIn';
+
+const EASE = [0.16, 1, 0.3, 1];
 
 const GAINS = [
   {
     title: "Perspective you can't buy",
-    body: "Hear from people who've actually built, led, and invested — not from textbooks or case studies written after the fact.",
+    body: "Hear from people who've actually built, led, and invested — not from textbooks or case studies.",
   },
   {
     title: 'Better questions',
@@ -27,24 +30,51 @@ const GAINS = [
   },
 ];
 
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.07 } },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
+};
+
 export default function StudentGains() {
   return (
     <section id="why-come" className="bg-black border-t border-white/10 py-24 px-8 md:px-16">
       <div className="max-w-7xl mx-auto">
         <FadeIn>
-          <p className="font-sans text-white/30 text-[10px] font-semibold uppercase tracking-[0.2em] mb-5">For Students</p>
+          <p className="font-sans text-white/25 text-[10px] font-semibold uppercase tracking-[0.2em] mb-5">
+            For Students
+          </p>
           <h2 className="font-sans font-black text-white text-3xl md:text-4xl uppercase tracking-tight leading-tight mb-14">
             What you actually<br />walk out with.
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10">
-            {GAINS.map(({ title, body }) => (
-              <div key={title} className="bg-black p-8">
-                <h3 className="font-sans text-white text-sm font-bold uppercase tracking-wide mb-3">{title}</h3>
-                <p className="font-sans text-white/40 text-sm leading-relaxed">{body}</p>
-              </div>
-            ))}
-          </div>
         </FadeIn>
+
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+        >
+          {GAINS.map(({ title, body }) => (
+            <motion.div
+              key={title}
+              variants={cardVariants}
+              className="bg-black p-8 group hover:bg-white/[0.04] transition-colors duration-300 cursor-default"
+            >
+              {/* Tiny accent dot that fills on hover */}
+              <div className="w-1.5 h-1.5 rounded-full bg-white/20 mb-6 group-hover:bg-white transition-colors duration-300" />
+              <h3 className="font-sans text-white text-sm font-bold uppercase tracking-wide mb-3">
+                {title}
+              </h3>
+              <p className="font-sans text-white/35 text-sm leading-relaxed">{body}</p>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );
