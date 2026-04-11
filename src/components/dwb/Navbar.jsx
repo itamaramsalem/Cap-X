@@ -16,8 +16,8 @@ const RIGHT_LINKS = [
   {
     to: '/#attend', label: 'ATTEND', anchor: 'attend',
     submenu: [
-      { label: 'Speaker Schedule', anchor: 'speakers' },
-      { label: 'Upcoming Sessions', anchor: 'schedule' },
+      { label: 'Upcoming Events', anchor: 'speakers' },
+      { label: 'Calendar of Events', anchor: 'schedule' },
     ],
   },
 ];
