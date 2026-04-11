@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import FadeIn from './FadeIn';
 
 const TIMELINE = [
@@ -12,6 +13,7 @@ export default function HowItWorks() {
   return (
     <section id="format" className="bg-cream py-24 px-8 md:px-16">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+
         {/* Left column */}
         <FadeIn>
           <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-5">How It Works</p>
@@ -43,20 +45,26 @@ export default function HowItWorks() {
           </blockquote>
         </FadeIn>
 
-        {/* Right column — timeline */}
-        <FadeIn delay={0.15}>
-          <div className="space-y-0">
-            {TIMELINE.map(({ tag, label }, i) => (
-              <div key={tag} className="flex items-start gap-5 py-5 border-b border-navy/10 last:border-0">
-                <span className="font-dm-sans text-xs font-semibold uppercase tracking-widest bg-navy text-white px-3 py-1 rounded whitespace-nowrap mt-0.5">
-                  {tag}
-                </span>
-                <p className="font-dm-sans text-navy text-sm font-medium leading-snug pt-1">{label}{i === 4 ? '' : ''}</p>
-              </div>
-            ))}
-            <p className="font-dm-sans text-muted-text text-xs mt-3">*Applies to select speakers only</p>
-          </div>
-        </FadeIn>
+        {/* Right column — animated timeline */}
+        <div className="space-y-0">
+          {TIMELINE.map(({ tag, label }, i) => (
+            <motion.div
+              key={tag}
+              initial={{ opacity: 0, x: -16 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.45, ease: 'easeOut', delay: i * 0.1 }}
+              className="flex items-start gap-5 py-5 border-b border-navy/10 last:border-0 group"
+            >
+              <span className="font-dm-sans text-xs font-semibold uppercase tracking-widest bg-navy text-white px-3 py-1 rounded whitespace-nowrap mt-0.5 group-hover:bg-gold group-hover:text-navy transition-colors duration-200">
+                {tag}
+              </span>
+              <p className="font-dm-sans text-navy text-sm font-medium leading-snug pt-1">{label}</p>
+            </motion.div>
+          ))}
+          <p className="font-dm-sans text-muted-text text-xs mt-3">*Applies to select speakers only</p>
+        </div>
+
       </div>
     </section>
   );
