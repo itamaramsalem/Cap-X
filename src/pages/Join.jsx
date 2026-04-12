@@ -55,7 +55,7 @@ function confirmationEmail({ first_name, last_name, email, netid, major, graduat
                 <tr>
                   <td style="border-left:3px solid #c9a84c;padding-left:20px;padding-bottom:40px;">
                     <p style="margin:0 0 6px;font-size:11px;color:#c9a84c;letter-spacing:0.22em;text-transform:uppercase;">Founding Member</p>
-                    <p style="margin:0;font-size:32px;font-weight:700;color:#ffffff;line-height:1.2;">You're in, ${first_name}.</p>
+                    <p style="margin:0;font-size:32px;font-weight:700;color:#ffffff;line-height:1.2;">You're in, ${first_name}!</p>
                   </td>
                 </tr>
               </table>
