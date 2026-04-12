@@ -16,6 +16,7 @@ function Rocket({ sectionRef }) {
     offset: ['start end', 'end start'],
   });
 
+<<<<<<< HEAD
   // Phase 1 (0–0.18): rocket fades in and floats up to resting position
   // Phase 2 (0.18–0.32): rocket holds perfectly still
   // Phase 3 (0.32–0.82): rocket launches upward and exits
@@ -83,6 +84,101 @@ function Rocket({ sectionRef }) {
           className="absolute bottom-[150px] left-1/2 -translate-x-1/2"
           style={{ y: rocketY, opacity: rocketOpacity }}
         >
+=======
+  // ── Tuning constants ────────────────────────────────────────────────────────
+  const V_START      =  410;  // px  rocket y-offset at scroll 0 (nose at container bottom)
+  const V_END        = -960;  // px  rocket y-offset at scroll 1 (well above section)
+  const DRIFT_AMP    =   24;  // px  max horizontal sine drift (keep modest for elegance)
+  const DRIFT_START  = 0.14;  // scroll progress where horizontal drift begins
+  const DRIFT_SPAN   = 0.58;  // scroll progress duration of one drift arc
+  // ────────────────────────────────────────────────────────────────────────────
+
+  // Vertical — ease-in acceleration: slow nose reveal → faster than scroll mid-section
+  // Breakpoints are chosen so peak speed (~progress 0.45-0.70) is ≈1.3× actual scroll speed.
+  const rocketY = useTransform(
+    scrollYProgress,
+    [0,     0.10,   0.25,   0.45,   0.70,   1.0],
+    [V_START, V_START - 40, V_START - 210, -120, -620, V_END]
+  );
+
+  // Horizontal — single smooth sine arc, no ping-pong.
+  // useTransform with a function maps the live MotionValue through Math.sin cleanly.
+  const rocketX = useTransform(scrollYProgress, (p) => {
+    const t = Math.max(0, Math.min(1, (p - DRIFT_START) / DRIFT_SPAN));
+    // sin(t·π) produces one arch: 0 → peak → 0, so the rocket drifts right and returns.
+    // The ×0.25 offset gives it a very subtle residual left lean on exit.
+    return Math.sin(t * Math.PI) * DRIFT_AMP - t * DRIFT_AMP * 0.25;
+  });
+
+  // Smoke plume — attached to rocket nozzle, grows as rocket ascends
+  const plumeScale   = useTransform(scrollYProgress, [0.08, 0.68], [0, 1]);
+  const plumeOpacity = useTransform(scrollYProgress, [0.07, 0.20], [0, 1]);
+
+  // Caption fades as rocket begins to move
+  const textOpacity = useTransform(scrollYProgress, [0, 0.18], [1, 0]);
+
+  return (
+    <div className="flex flex-col items-center gap-4 w-full select-none">
+
+      {/* Clipping boundary — overflow-hidden hides the rocket when it travels beyond the container */}
+      <div className="relative w-full overflow-hidden" style={{ height: 520 }}>
+
+        {/* ── Rocket + plume move together ── */}
+        <motion.div
+          className="absolute"
+          style={{ y: rocketY, x: rocketX, top: '110px', left: '50%', marginLeft: '-75px' }}
+        >
+          {/* ── Smoke plume — rendered before rocket so rocket sits on top ──
+              top: 204px aligns with the nozzle bottom (y=136 in SVG × 1.5 scale).
+              left: -45px centres the 240px-wide plume on the 150px-wide rocket (75 − 120 = −45).
+              CSS blur merges the borderless ellipses into one soft cloud blob.
+              originX/Y: 0.5/0 scales outward from the nozzle exit point. */}
+          <motion.div
+            className="absolute pointer-events-none"
+            style={{
+              scale: plumeScale,
+              opacity: plumeOpacity,
+              originX: 0.5,
+              originY: 0,
+              top: '204px',
+              left: '-45px',
+            }}
+          >
+            <svg
+              width="240"
+              height="300"
+              viewBox="0 0 240 300"
+              fill="none"
+              style={{ filter: 'blur(8px)' }}
+            >
+              <g fill="#b6c2d2" fillOpacity="0.78">
+                {/* Nozzle exit — tiny wisp */}
+                <ellipse cx="120" cy="11"  rx="13" ry="11"/>
+                {/* Small puffs just below nozzle */}
+                <ellipse cx="105" cy="40"  rx="22" ry="22"/>
+                <ellipse cx="135" cy="40"  rx="22" ry="22"/>
+                <ellipse cx="120" cy="50"  rx="20" ry="18"/>
+                {/* Upper cloud */}
+                <ellipse cx="82"  cy="96"  rx="36" ry="40"/>
+                <ellipse cx="158" cy="96"  rx="36" ry="40"/>
+                <ellipse cx="120" cy="86"  rx="44" ry="40"/>
+                {/* Mid cloud */}
+                <ellipse cx="64"  cy="170" rx="54" ry="56"/>
+                <ellipse cx="176" cy="170" rx="54" ry="56"/>
+                <ellipse cx="120" cy="156" rx="62" ry="58"/>
+                {/* Base spread */}
+                <ellipse cx="44"  cy="248" rx="68" ry="52"/>
+                <ellipse cx="196" cy="248" rx="68" ry="52"/>
+                <ellipse cx="120" cy="264" rx="95" ry="44"/>
+                {/* Far outer wisps */}
+                <ellipse cx="12"  cy="240" rx="36" ry="32"/>
+                <ellipse cx="228" cy="240" rx="36" ry="32"/>
+              </g>
+            </svg>
+          </motion.div>
+
+          {/* ── Rocket SVG ── */}
+>>>>>>> danrosenboim
           <svg
             viewBox="0 0 100 200"
             width="160"
@@ -169,7 +265,11 @@ export default function HowItWorks() {
             <p className="font-dm-sans text-muted-text text-xs mt-3">*Applies to select speakers only</p>
           </div>
 
+<<<<<<< HEAD
           {/* Rocket — fills the right grid column */}
+=======
+          {/* Rocket — right grid column, self-contained with its own clipping container */}
+>>>>>>> danrosenboim
           <div className="hidden md:flex justify-center items-center w-full">
             <Rocket sectionRef={sectionRef} />
           </div>
