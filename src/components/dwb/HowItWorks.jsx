@@ -16,58 +16,77 @@ function Rocket({ sectionRef }) {
     offset: ['start end', 'end start'],
   });
 
-  // Rocket flies up and off the top of the container
-  const rocketY    = useTransform(scrollYProgress, [0, 1], [0, -700]);
+  // Phase 1 (0–0.18): rocket fades in and floats up to resting position
+  // Phase 2 (0.18–0.32): rocket holds perfectly still
+  // Phase 3 (0.32–0.82): rocket launches upward and exits
+  const rocketY       = useTransform(scrollYProgress, [0, 0.18, 0.32, 0.82], [60, 0, 0, -480]);
+  const rocketOpacity = useTransform(scrollYProgress, [0, 0.13, 0.68, 0.82], [0, 1, 1, 0]);
 
-  // Plume grows upward from the nozzle's starting position
-  const plumeH     = useTransform(scrollYProgress, [0, 0.05, 0.9], [0, 30, 560]);
-  const plumeOpacity = useTransform(scrollYProgress, [0, 0.06, 0.75, 1], [0, 1, 0.6, 0]);
+  // Cloud: anchored at nozzle height (top: 305px), grows downward as rocket launches
+  const cloudOpacity  = useTransform(scrollYProgress, [0, 0.30, 0.42, 0.88], [0, 0, 1, 0.35]);
+  const cloudScale    = useTransform(scrollYProgress, [0.30, 0.82], [0.05, 1.1]);
 
-  // Text fades out as rocket launches
-  const textOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
+  // Caption fades as rocket departs
+  const textOpacity   = useTransform(scrollYProgress, [0, 0.22], [1, 0]);
 
   return (
-    <div className="flex flex-col items-center gap-6 select-none">
-      {/* Clipping container */}
-      <div className="relative overflow-hidden" style={{ width: 180, height: 520 }}>
+    <div className="flex flex-col items-center gap-6 select-none w-full">
 
-        {/* ── Plume: anchored at nozzle start, grows upward ── */}
+      {/* w-full so the rocket never clips horizontally; overflow-hidden clips rocket at top */}
+      <div className="relative overflow-hidden w-full" style={{ height: 560 }}>
+
+        {/* ── Smoke cloud ──
+            top is pinned to the nozzle's resting y-position (≈305 px).
+            origin-top means it scales downward from the nozzle, not upward. */}
         <motion.div
-          style={{ height: plumeH, opacity: plumeOpacity }}
-          className="absolute bottom-[28px] left-1/2 -translate-x-1/2 overflow-hidden"
+          className="absolute left-1/2 -translate-x-1/2 origin-top"
+          style={{ top: '305px', opacity: cloudOpacity, scale: cloudScale }}
         >
           <svg
-            width="80"
-            height="560"
-            viewBox="0 0 80 560"
+            viewBox="0 0 220 220"
+            width="220"
+            height="220"
             fill="none"
             stroke="currentColor"
+            strokeWidth="1.6"
             strokeLinecap="round"
-            className="text-navy absolute bottom-0 left-0"
+            className="text-navy"
           >
-            {/* Centre exhaust */}
-            <line x1="40" y1="0"  x2="40"  y2="560" strokeWidth="1.8" strokeOpacity="0.9"/>
-            {/* Mid diverging lines */}
-            <line x1="40" y1="0"  x2="20"  y2="560" strokeWidth="1.2" strokeOpacity="0.6"/>
-            <line x1="40" y1="0"  x2="60"  y2="560" strokeWidth="1.2" strokeOpacity="0.6"/>
-            {/* Outer wisps */}
-            <line x1="40" y1="0"  x2="4"   y2="560" strokeWidth="0.7" strokeOpacity="0.3"/>
-            <line x1="40" y1="0"  x2="76"  y2="560" strokeWidth="0.7" strokeOpacity="0.3"/>
-            {/* Wavy texture lines */}
-            <path d="M40 0 Q28 140 32 280 Q36 420 14 560" strokeWidth="0.6" strokeOpacity="0.25"/>
-            <path d="M40 0 Q52 140 48 280 Q44 420 66 560" strokeWidth="0.6" strokeOpacity="0.25"/>
+            {/* Narrow tip — sits right at nozzle exit */}
+            <circle cx="110" cy="16"  r="12" />
+            {/* Row 2 */}
+            <circle cx="89"  cy="46"  r="18" />
+            <circle cx="131" cy="46"  r="18" />
+            {/* Row 3 */}
+            <circle cx="68"  cy="80"  r="22" />
+            <circle cx="110" cy="76"  r="21" />
+            <circle cx="152" cy="80"  r="22" />
+            {/* Row 4 */}
+            <circle cx="54"  cy="116" r="25" />
+            <circle cx="96"  cy="112" r="23" />
+            <circle cx="130" cy="112" r="23" />
+            <circle cx="166" cy="116" r="25" />
+            {/* Row 5 — widest */}
+            <circle cx="47"  cy="154" r="26" />
+            <circle cx="88"  cy="150" r="25" />
+            <circle cx="128" cy="150" r="25" />
+            <circle cx="169" cy="154" r="26" />
+            {/* Base ellipse */}
+            <ellipse cx="110" cy="198" rx="62" ry="21" />
           </svg>
         </motion.div>
 
-        {/* ── Rocket: moves up and off screen ── */}
+        {/* ── Rocket ──
+            Centered with left-1/2 / -translate-x-1/2 so it never clips horizontally.
+            bottom-[150px] puts the full 320 px SVG well inside the 560 px container. */}
         <motion.div
-          style={{ y: rocketY }}
-          className="absolute bottom-[20px] left-1/2 -translate-x-1/2"
+          className="absolute bottom-[150px] left-1/2 -translate-x-1/2"
+          style={{ y: rocketY, opacity: rocketOpacity }}
         >
           <svg
             viewBox="0 0 100 200"
-            width="150"
-            height="300"
+            width="160"
+            height="320"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.8"
@@ -150,8 +169,8 @@ export default function HowItWorks() {
             <p className="font-dm-sans text-muted-text text-xs mt-3">*Applies to select speakers only</p>
           </div>
 
-          {/* Rocket — centred in the right half */}
-          <div className="hidden md:flex justify-center items-center">
+          {/* Rocket — fills the right grid column */}
+          <div className="hidden md:flex justify-center items-center w-full">
             <Rocket sectionRef={sectionRef} />
           </div>
         </div>
