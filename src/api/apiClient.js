@@ -97,11 +97,11 @@ export const auth = {
 // ─────────────────────────────────────────────────────────────────
 export const integrations = {
   Core: {
-    async SendEmail({ to, subject, body, from_name }) {
+    async SendEmail({ to, subject, body, html, from_name }) {
       const res = await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to, subject, body, from_name }),
+        body: JSON.stringify({ to, subject, body, html, from_name }),
       });
       if (!res.ok) throw new Error('Failed to send email');
       return res.json();

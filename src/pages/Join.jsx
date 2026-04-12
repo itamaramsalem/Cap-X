@@ -2,11 +2,163 @@ import { useState } from 'react';
 import Navbar from '../components/dwb/Navbar';
 import Footer from '../components/dwb/Footer';
 import FadeIn from '../components/dwb/FadeIn';
-import { base44 } from '../api/apiClient';
+import { base44, integrations } from '../api/apiClient';
 import { useToast } from '../components/ui/use-toast';
 import { CheckCircle } from 'lucide-react';
 
 const GRADUATION_YEARS = ['2025', '2026', '2027', '2028', '2029', '2030'];
+
+function confirmationEmail({ first_name, last_name, email, netid, major, graduation_year }) {
+  const details = [
+    ['Name', `${first_name} ${last_name}`],
+    ['Email', email],
+    ['NetID', netid],
+    major && ['Major', major],
+    graduation_year && ['Graduation Year', graduation_year],
+  ].filter(Boolean);
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Cap-X</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f4f5;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:48px 16px;">
+    <tr>
+      <td align="center">
+        <table width="580" cellpadding="0" cellspacing="0" style="max-width:580px;width:100%;">
+
+          <!-- Logo header -->
+          <tr>
+            <td align="center" style="padding-bottom:28px;">
+              <table cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background:#0a0f1e;padding:14px 28px;">
+                    <p style="margin:0;font-size:20px;font-weight:800;color:#c9a84c;letter-spacing:0.12em;text-transform:uppercase;">CAP&#8209;X</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding-top:8px;">
+                    <p style="margin:0;font-size:10px;color:#6b7280;letter-spacing:0.18em;text-transform:uppercase;">Rutgers University</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Hero banner -->
+          <tr>
+            <td style="background:#0a0f1e;padding:48px 48px 0;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="border-left:3px solid #c9a84c;padding-left:20px;padding-bottom:40px;">
+                    <p style="margin:0 0 6px;font-size:11px;color:#c9a84c;letter-spacing:0.22em;text-transform:uppercase;">Founding Member</p>
+                    <p style="margin:0;font-size:32px;font-weight:700;color:#ffffff;line-height:1.2;">You're in, ${first_name}!</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Gold divider -->
+          <tr>
+            <td style="background:#0a0f1e;padding:0 48px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr><td style="height:1px;background:#c9a84c;opacity:0.3;"></td></tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="background:#0a0f1e;padding:36px 48px 48px;">
+              <p style="margin:0 0 32px;font-size:15px;color:rgba(255,255,255,0.6);line-height:1.8;">
+                Welcome to Cap-X at Rutgers. You've been pre-registered as a founding member —
+                giving you first access to every session, exclusive networking events, and direct
+                introductions to industry leaders.
+              </p>
+
+              <!-- Details box -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:36px;background:#111827;border:1px solid rgba(255,255,255,0.08);">
+                <tr>
+                  <td style="padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.08);">
+                    <p style="margin:0;font-size:9px;font-weight:700;color:#c9a84c;letter-spacing:0.25em;text-transform:uppercase;">Registration Details</p>
+                  </td>
+                </tr>
+                ${details.map(([label, value], i) => `
+                <tr>
+                  <td style="padding:13px 24px;${i < details.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,0.05);' : ''}width:38%;">
+                    <p style="margin:0;font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.12em;text-transform:uppercase;">${label}</p>
+                  </td>
+                  <td style="padding:13px 24px;${i < details.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,0.05);' : ''}">
+                    <p style="margin:0;font-size:13px;font-weight:500;color:#ffffff;">${value}</p>
+                  </td>
+                </tr>`).join('')}
+              </table>
+
+              <!-- What to expect -->
+              <p style="margin:0 0 16px;font-size:9px;font-weight:700;color:#c9a84c;letter-spacing:0.25em;text-transform:uppercase;">What to Expect</p>
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:36px;">
+                ${[
+                  ['Priority invites', 'Session announcements sent directly to this email before anyone else.'],
+                  ['Exclusive networking', 'Access to founding member events with speakers and industry professionals.'],
+                  ['Early access', 'First to know about new speakers, workshops, and Cap-X updates.'],
+                ].map(([title, desc]) => `
+                <tr>
+                  <td valign="top" width="20" style="padding:10px 0;">
+                    <table cellpadding="0" cellspacing="0"><tr><td style="width:6px;height:6px;background:#c9a84c;border-radius:50%;margin-top:5px;"></td></tr></table>
+                  </td>
+                  <td style="padding:10px 0 10px 12px;border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <p style="margin:0 0 2px;font-size:13px;font-weight:600;color:#ffffff;">${title}</p>
+                    <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;">${desc}</p>
+                  </td>
+                </tr>`).join('')}
+              </table>
+
+              <!-- CTA -->
+              <table cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background:#c9a84c;">
+                    <a href="https://capxrutgers.com" style="display:inline-block;padding:14px 32px;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:#0a0f1e;text-decoration:none;">
+                      Visit Cap-X &rarr;
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background:#070c18;padding:24px 48px;" align="center">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding-bottom:12px;">
+                    <p style="margin:0;font-size:16px;font-weight:800;color:#c9a84c;letter-spacing:0.12em;">CAP&#8209;X</p>
+                    <p style="margin:2px 0 0;font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.15em;text-transform:uppercase;">Rutgers University</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 0;border-top:1px solid rgba(255,255,255,0.07);" align="center">
+                    <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.2);">
+                      Questions? Reply to this email or reach us at
+                      <a href="mailto:team@capxrutgers.com" style="color:#c9a84c;text-decoration:none;">team@capxrutgers.com</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
 
 export default function Join() {
   const [form, setForm] = useState({
@@ -36,6 +188,13 @@ export default function Join() {
     setLoading(true);
     try {
       await base44.entities.Member.create(form);
+      // Fire confirmation email (non-blocking — don't fail registration if email fails)
+      integrations.Core.SendEmail({
+        to: form.email,
+        subject: 'Welcome to Cap-X — You\'re Pre-Registered',
+        from_name: 'Cap-X Rutgers',
+        html: confirmationEmail(form),
+      }).catch(() => {});
       setDone(true);
     } catch (err) {
       toast({ title: 'Something went wrong', description: err.message, variant: 'destructive' });
