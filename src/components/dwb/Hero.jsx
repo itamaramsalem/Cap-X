@@ -60,7 +60,7 @@ export default function Hero() {
         </FadeIn>
 
         {/* Headline + body */}
-        <FadeIn delay={0.1} className="max-w-2xl pt-32 md:pt-48">
+        <FadeIn delay={0.1} className="pt-32 md:pt-48">
 
           {/* Mobile Cap-X */}
           <h1 className="font-playfair text-white font-bold leading-none mb-6 md:hidden">
@@ -69,39 +69,51 @@ export default function Hero() {
             </span>
           </h1>
 
-          <h2 className="font-playfair text-white text-3xl md:text-5xl font-bold leading-tight mb-6">
-            Where Students Meet{' '}
-            <em className="text-gold" style={{ fontStyle: 'italic' }}>Industry Leaders</em>
-          </h2>
+          <div className="flex flex-col md:flex-row md:items-start md:gap-16">
+            {/* Left — headline + content */}
+            <div className="max-w-2xl">
+              <h2 className="font-playfair text-white text-3xl md:text-5xl font-bold leading-tight mb-6">
+                Where Students Meet{' '}
+                <em className="text-gold" style={{ fontStyle: 'italic' }}>Industry Leaders</em>
+              </h2>
 
-          <p className="font-dm-sans text-white/55 text-base max-w-xl mb-10 leading-relaxed">
-            Cap-X connects ambitious students with senior professionals across finance, tech,
-            consulting, and entrepreneurship — through intimate speaker series and curated networking.
-          </p>
+              <p className="font-dm-sans text-white/55 text-base max-w-xl mb-10 leading-relaxed">
+                Cap-X connects ambitious students with senior professionals across finance, tech,
+                consulting, and entrepreneurship — through intimate speaker series and curated networking.
+              </p>
 
-          <div className="flex items-center gap-6 flex-wrap">
-            <motion.a
-              href="/#attend"
-              onClick={handleAttend}
-              whileTap={{ scale: 0.96 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-              className="relative inline-block bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-7 py-4 cursor-pointer overflow-hidden group"
-            >
-              <span className="relative z-10">Attend a Session</span>
-              <span className="absolute inset-0 bg-gold-dark origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out z-0" />
-            </motion.a>
+              <div className="flex items-center gap-6 flex-wrap">
+                <motion.a
+                  href="/#attend"
+                  onClick={handleAttend}
+                  whileTap={{ scale: 0.96 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                  className="relative inline-block bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-7 py-4 cursor-pointer overflow-hidden group"
+                >
+                  <span className="relative z-10">Attend a Session</span>
+                  <span className="absolute inset-0 bg-gold-dark origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out z-0" />
+                </motion.a>
 
-            <span className="font-dm-sans text-white/40 text-sm">
-              Free &nbsp;·&nbsp; Open to every major.
-            </span>
+                <span className="font-dm-sans text-white/40 text-sm">
+                  Free &nbsp;·&nbsp; Open to every major.
+                </span>
+              </div>
+
+              {/* Live pre-registration count */}
+              {rsvpCount != null && rsvpCount > 0 && (
+                <p className="font-dm-sans text-white/30 text-xs mt-5">
+                  {rsvpCount} student{rsvpCount !== 1 ? 's' : ''} have already pre-registered
+                </p>
+              )}
+            </div>
+
+            {/* Right — quote */}
+            <div className="hidden md:flex items-center justify-center self-center flex-1 mt-2">
+              <p className="font-playfair text-white/30 text-3xl lg:text-4xl xl:text-5xl leading-relaxed text-center" style={{ fontStyle: 'italic' }}>
+                "It's not what you know,<br />it's who you know"
+              </p>
+            </div>
           </div>
-
-          {/* Live pre-registration count */}
-          {rsvpCount != null && rsvpCount > 0 && (
-            <p className="font-dm-sans text-white/30 text-xs mt-5">
-              {rsvpCount} student{rsvpCount !== 1 ? 's' : ''} have already pre-registered
-            </p>
-          )}
         </FadeIn>
       </div>
 
