@@ -15,7 +15,7 @@ const RIGHT_LINKS = [
   { to: '/#why-come', label: 'WHY COME', anchor: 'why-come' },
   { to: '/#sectors', label: 'SECTORS', anchor: 'sectors' },
   {
-    to: '/#attend', label: 'ATTEND', anchor: 'attend',
+    to: '/#speakers', label: 'ATTEND', anchor: 'speakers',
     submenu: [
       { label: 'Upcoming Events', anchor: 'speakers' },
       { label: 'Calendar of Events', anchor: 'schedule' },
@@ -23,7 +23,7 @@ const RIGHT_LINKS = [
   },
 ];
 
-const ALL_ANCHORS = ['speakers', 'format', 'why-come', 'sectors', 'attend'];
+const ALL_ANCHORS = ['speakers', 'format', 'why-come', 'sectors'];
 
 function NavLink({ to, label, anchor, onClick, activeSection, isPathActive }) {
   const navigate = useNavigate();
@@ -224,6 +224,14 @@ export default function Navbar() {
           )}
         </div>
 
+        {/* Join button */}
+        <Link
+          to="/join"
+          className="hidden md:inline-flex items-center ml-4 bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-4 py-2 hover:bg-gold-dark transition-colors"
+        >
+          Join
+        </Link>
+
         {/* Admin button */}
         <Link
           to={isAdmin ? '/admin' : '/admin/login'}
@@ -254,6 +262,13 @@ export default function Navbar() {
             className="md:hidden bg-navy border-t border-white/10 overflow-hidden"
           >
             <div className="px-6 py-5 flex flex-col gap-4">
+              <Link
+                to="/join"
+                onClick={() => setOpen(false)}
+                className="inline-flex items-center justify-center bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-4 py-3 hover:bg-gold-dark transition-colors"
+              >
+                Join the Club
+              </Link>
               {[...LEFT_LINKS, ...RIGHT_LINKS].flatMap((link) =>
                 link.submenu
                   ? link.submenu.map((item) => (
