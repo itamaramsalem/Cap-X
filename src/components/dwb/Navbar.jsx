@@ -224,6 +224,14 @@ export default function Navbar() {
           )}
         </div>
 
+        {/* JOIN CTA */}
+        <Link
+          to="/join"
+          className="hidden md:inline-block ml-6 bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-4 py-2 hover:bg-gold-dark transition-colors"
+        >
+          Join
+        </Link>
+
         {/* Admin button */}
         <Link
           to={isAdmin ? '/admin' : '/admin/login'}
@@ -254,6 +262,13 @@ export default function Navbar() {
             className="md:hidden bg-navy border-t border-white/10 overflow-hidden"
           >
             <div className="px-6 py-5 flex flex-col gap-4">
+              <Link
+                to="/join"
+                onClick={() => setOpen(false)}
+                className="inline-block bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-4 py-2.5 text-center hover:bg-gold-dark transition-colors"
+              >
+                Join
+              </Link>
               {[...LEFT_LINKS, ...RIGHT_LINKS].flatMap((link) =>
                 link.submenu
                   ? link.submenu.map((item) => (
