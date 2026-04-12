@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../api/apiClient';
-import { LogOut, Users, CalendarCheck, ClipboardList, ChevronDown, ChevronUp, Trash2, Download, Plus, X } from 'lucide-react';
+import { LogOut, Users, CalendarCheck, ClipboardList, ChevronDown, ChevronUp, Trash2, Download, Plus, X, Archive } from 'lucide-react';
 
+// ──────────────────────────────────────────────
+// Stat card
+// ──────────────────────────────────────────────
 function StatCard({ label, value, icon: Icon }) {
   return (
     <div className="bg-navy-light border border-white/10 p-6 flex items-center gap-5">
@@ -17,6 +20,9 @@ function StatCard({ label, value, icon: Icon }) {
   );
 }
 
+// ──────────────────────────────────────────────
+// Members table (with delete)
+// ──────────────────────────────────────────────
 function MembersTable({ members, onDelete }) {
   const [query, setQuery] = useState('');
   const [deleting, setDeleting] = useState(null);
@@ -123,92 +129,166 @@ function MembersTable({ members, onDelete }) {
   );
 }
 
-function CreateEventForm({ onCreated }) {
-  const [open, setOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ title: '', speaker: '', date: '', total_seats: '' });
+// ──────────────────────────────────────────────
+// Events manager (add + delete)
+// ──────────────────────────────────────────────
+const SECTORS = ['Finance & Trading', 'Technology & AI', 'Consulting', 'Entrepreneurship', 'Other'];
 
-  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+function EventsManager({ events, onAdd, onDelete }) {
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [form, setForm] = useState({
+    title: '', speaker: '', date: '', location: '', sector: '', capacity: '', description: '',
+  });
+
+  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError('');
     setSaving(true);
-    const payload = {
-      title: form.title,
-      speaker: form.speaker || null,
-      date: form.date || null,
-      total_seats: form.total_seats ? parseInt(form.total_seats) : null,
-    };
-    const { data } = await supabase.from('club_events').insert(payload).select().single();
-    if (data) onCreated(data);
-    setForm({ title: '', speaker: '', date: '', total_seats: '' });
-    setOpen(false);
-    setSaving(false);
+    try {
+      await onAdd({
+        title: form.title,
+        speaker: form.speaker || null,
+        date: form.date || null,
+        location: form.location || null,
+        sector: form.sector || null,
+        capacity: form.capacity ? parseInt(form.capacity) : null,
+        description: form.description || null,
+      });
+      setForm({ title: '', speaker: '', date: '', location: '', sector: '', capacity: '', description: '' });
+      setShowForm(false);
+    } catch (err) {
+      setFormError(err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  if (!open) {
-    return (
-      <button
-        onClick={() => setOpen(true)}
-        className="flex items-center gap-1.5 bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.12em] px-4 py-2 hover:bg-gold-dark transition-colors"
-      >
-        <Plus size={13} />
-        New Event
-      </button>
-    );
-  }
-
   return (
-    <form onSubmit={handleSubmit} className="border border-white/15 bg-navy-light p-6 mb-6">
-      <div className="flex items-center justify-between mb-5">
-        <p className="font-dm-sans text-white text-sm font-semibold uppercase tracking-[0.12em]">New Event</p>
-        <button type="button" onClick={() => setOpen(false)} className="text-white/30 hover:text-white transition-colors">
-          <X size={16} />
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-playfair text-white text-2xl font-bold">
+          Events <span className="text-white/30 text-lg font-normal">({events.length})</span>
+        </h2>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="flex items-center gap-1.5 bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.12em] px-4 py-2 hover:bg-gold-dark transition-colors"
+        >
+          {showForm ? <X size={13} /> : <Plus size={13} />}
+          {showForm ? 'Cancel' : 'Add Event'}
         </button>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-        <div>
-          <label className="font-dm-sans text-white/40 text-xs uppercase tracking-[0.12em] block mb-1.5">Title *</label>
-          <input required value={form.title} onChange={set('title')} className="w-full bg-navy border border-white/15 text-white font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors" />
-        </div>
-        <div>
-          <label className="font-dm-sans text-white/40 text-xs uppercase tracking-[0.12em] block mb-1.5">Speaker</label>
-          <input value={form.speaker} onChange={set('speaker')} className="w-full bg-navy border border-white/15 text-white font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors" />
-        </div>
-        <div>
-          <label className="font-dm-sans text-white/40 text-xs uppercase tracking-[0.12em] block mb-1.5">Date</label>
-          <input type="date" value={form.date} onChange={set('date')} className="w-full bg-navy border border-white/15 text-white font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors" />
-        </div>
-        <div>
-          <label className="font-dm-sans text-white/40 text-xs uppercase tracking-[0.12em] block mb-1.5">Seat Limit</label>
-          <input type="number" min="1" value={form.total_seats} onChange={set('total_seats')} placeholder="Unlimited" className="w-full bg-navy border border-white/15 text-white placeholder-white/20 font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors" />
-        </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="bg-navy border border-white/10 p-6 mb-6 space-y-4">
+          <p className="font-dm-sans text-white/40 text-xs uppercase tracking-[0.15em] mb-2">New Event</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Title *</label>
+              <input
+                required value={form.title} onChange={set('title')}
+                className="w-full bg-navy-light border border-white/15 text-white font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors"
+              />
+            </div>
+            <div>
+              <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Speaker Name</label>
+              <input
+                value={form.speaker} onChange={set('speaker')} placeholder="e.g. Marcus Rivera"
+                className="w-full bg-navy-light border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors"
+              />
+            </div>
+            <div>
+              <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Date</label>
+              <input
+                type="date" value={form.date} onChange={set('date')}
+                className="w-full bg-navy-light border border-white/15 text-white font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors"
+              />
+            </div>
+            <div>
+              <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Location</label>
+              <input
+                value={form.location} onChange={set('location')} placeholder="e.g. RBS Room 204"
+                className="w-full bg-navy-light border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors"
+              />
+            </div>
+            <div>
+              <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Sector</label>
+              <select
+                value={form.sector} onChange={set('sector')}
+                className="w-full bg-navy-light border border-white/15 text-white font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors"
+              >
+                <option value="">Select sector</option>
+                {SECTORS.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Capacity</label>
+              <input
+                type="number" min="1" value={form.capacity} onChange={set('capacity')} placeholder="e.g. 50"
+                className="w-full bg-navy-light border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Description</label>
+            <textarea
+              value={form.description} onChange={set('description')} rows={3}
+              className="w-full bg-navy-light border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors resize-none"
+            />
+          </div>
+          {formError && <p className="font-dm-sans text-red-400 text-xs">{formError}</p>}
+          <button
+            type="submit" disabled={saving}
+            className="bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.12em] px-6 py-2.5 hover:bg-gold-dark transition-colors disabled:opacity-60"
+          >
+            {saving ? 'Saving…' : 'Create Event'}
+          </button>
+        </form>
+      )}
+
+      <div className="space-y-2">
+        {events.length === 0 ? (
+          <p className="font-dm-sans text-white/30 text-sm">No events yet.</p>
+        ) : (
+          events.map((ev) => (
+            <div key={ev.id} className="border border-white/10 px-5 py-4 flex items-center justify-between gap-4 group">
+              <div>
+                <p className="font-dm-sans text-white text-sm font-medium">{ev.title}</p>
+                <p className="font-dm-sans text-white/40 text-xs mt-0.5">
+                  {ev.date ? new Date(ev.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Date TBD'}
+                  {ev.speaker ? ` · ${ev.speaker}` : ''}
+                  {ev.sector ? ` · ${ev.sector}` : ''}
+                  {ev.capacity ? ` · ${ev.capacity} seats` : ''}
+                </p>
+              </div>
+              <button
+                onClick={() => onDelete(ev.id)}
+                className="text-white/20 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 shrink-0"
+                title="Delete event"
+              >
+                <Trash2 size={15} />
+              </button>
+            </div>
+          ))
+        )}
       </div>
-      <button type="submit" disabled={saving} className="bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.12em] px-5 py-2 hover:bg-gold-dark transition-colors disabled:opacity-60">
-        {saving ? 'Saving…' : 'Create Event'}
-      </button>
-    </form>
+    </div>
   );
 }
 
-function EventRsvpsTable({ eventRsvps, events, onDeleteEvent }) {
+// ──────────────────────────────────────────────
+// Event RSVPs accordion
+// ──────────────────────────────────────────────
+function EventRsvpsTable({ eventRsvps, events }) {
   const [openEvent, setOpenEvent] = useState(null);
-  const [deleting, setDeleting] = useState(null);
 
   const grouped = events.map((ev) => ({
     event: ev,
     rsvps: eventRsvps.filter((r) => r.event_id === ev.id),
   }));
-
-  const handleDeleteEvent = async (event) => {
-    if (!window.confirm(`Delete "${event.title}" and all its RSVPs?`)) return;
-    setDeleting(event.id);
-    await supabase.from('event_rsvps').delete().eq('event_id', event.id);
-    await supabase.from('club_events').delete().eq('id', event.id);
-    onDeleteEvent(event.id);
-    setDeleting(null);
-  };
-
   return (
     <div>
       <h2 className="font-playfair text-white text-2xl font-bold mb-4">
@@ -216,7 +296,7 @@ function EventRsvpsTable({ eventRsvps, events, onDeleteEvent }) {
       </h2>
 
       {grouped.length === 0 && (
-        <p className="font-dm-sans text-white/30 text-sm">No events yet — create one above.</p>
+        <p className="font-dm-sans text-white/30 text-sm">No events or RSVPs yet.</p>
       )}
 
       <div className="space-y-3">
@@ -240,13 +320,6 @@ function EventRsvpsTable({ eventRsvps, events, onDeleteEvent }) {
                   </span>
                   {openEvent === event.id ? <ChevronUp size={16} className="text-white/40" /> : <ChevronDown size={16} className="text-white/40" />}
                 </div>
-              </button>
-              <button
-                onClick={() => handleDeleteEvent(event)}
-                disabled={deleting === event.id}
-                className="px-4 text-white/20 hover:text-red-400 transition-colors disabled:opacity-30"
-              >
-                <Trash2 size={14} />
               </button>
             </div>
 
@@ -288,6 +361,155 @@ function EventRsvpsTable({ eventRsvps, events, onDeleteEvent }) {
   );
 }
 
+// ──────────────────────────────────────────────
+// Archive speakers section (add + delete)
+// ──────────────────────────────────────────────
+function ArchiveSpeakersSection({ speakers, onAdd, onDelete }) {
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [form, setForm] = useState({
+    name: '', title: '', company: '', sector: '', event_date: '', bio: '', linkedin: '',
+  });
+
+  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormError('');
+    setSaving(true);
+    try {
+      await onAdd({
+        name: form.name,
+        title: form.title || null,
+        company: form.company || null,
+        sector: form.sector || null,
+        event_date: form.event_date || null,
+        bio: form.bio || null,
+        linkedin: form.linkedin || null,
+      });
+      setForm({ name: '', title: '', company: '', sector: '', event_date: '', bio: '', linkedin: '' });
+      setShowForm(false);
+    } catch (err) {
+      setFormError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-playfair text-white text-2xl font-bold">
+          Archive Speakers <span className="text-white/30 text-lg font-normal">({speakers.length})</span>
+        </h2>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="flex items-center gap-1.5 bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.12em] px-4 py-2 hover:bg-gold-dark transition-colors"
+        >
+          {showForm ? <X size={13} /> : <Plus size={13} />}
+          {showForm ? 'Cancel' : 'Add Speaker'}
+        </button>
+      </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="bg-navy border border-white/10 p-6 mb-6 space-y-4">
+          <p className="font-dm-sans text-white/40 text-xs uppercase tracking-[0.15em] mb-2">Add Past Speaker</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Name *</label>
+              <input
+                required value={form.name} onChange={set('name')}
+                className="w-full bg-navy-light border border-white/15 text-white font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors"
+              />
+            </div>
+            <div>
+              <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Title</label>
+              <input
+                value={form.title} onChange={set('title')} placeholder="e.g. Vice President"
+                className="w-full bg-navy-light border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors"
+              />
+            </div>
+            <div>
+              <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Company</label>
+              <input
+                value={form.company} onChange={set('company')} placeholder="e.g. Goldman Sachs"
+                className="w-full bg-navy-light border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors"
+              />
+            </div>
+            <div>
+              <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Sector</label>
+              <select
+                value={form.sector} onChange={set('sector')}
+                className="w-full bg-navy-light border border-white/15 text-white font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors"
+              >
+                <option value="">Select sector</option>
+                {SECTORS.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Event Date</label>
+              <input
+                type="date" value={form.event_date} onChange={set('event_date')}
+                className="w-full bg-navy-light border border-white/15 text-white font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors"
+              />
+            </div>
+            <div>
+              <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">LinkedIn URL</label>
+              <input
+                value={form.linkedin} onChange={set('linkedin')} placeholder="linkedin.com/in/..."
+                className="w-full bg-navy-light border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Bio</label>
+            <textarea
+              value={form.bio} onChange={set('bio')} rows={3}
+              className="w-full bg-navy-light border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors resize-none"
+            />
+          </div>
+          {formError && <p className="font-dm-sans text-red-400 text-xs">{formError}</p>}
+          <button
+            type="submit" disabled={saving}
+            className="bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.12em] px-6 py-2.5 hover:bg-gold-dark transition-colors disabled:opacity-60"
+          >
+            {saving ? 'Saving…' : 'Add to Archive'}
+          </button>
+        </form>
+      )}
+
+      <div className="space-y-2">
+        {speakers.length === 0 ? (
+          <p className="font-dm-sans text-white/30 text-sm">No archive speakers yet.</p>
+        ) : (
+          speakers.map((s) => (
+            <div key={s.id} className="border border-white/10 px-5 py-4 flex items-center justify-between gap-4 group">
+              <div>
+                <p className="font-dm-sans text-white text-sm font-medium">{s.name}</p>
+                <p className="font-dm-sans text-white/40 text-xs mt-0.5">
+                  {[s.title, s.company, s.sector].filter(Boolean).join(' · ')}
+                  {s.event_date ? ` · ${new Date(s.event_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : ''}
+                </p>
+              </div>
+              <button
+                onClick={() => onDelete(s.id)}
+                className="text-white/20 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 shrink-0"
+                title="Remove from archive"
+              >
+                <Trash2 size={15} />
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
+// Admin main
+// ──────────────────────────────────────────────
 export default function Admin() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -295,6 +517,7 @@ export default function Admin() {
   const [members, setMembers] = useState([]);
   const [events, setEvents] = useState([]);
   const [eventRsvps, setEventRsvps] = useState([]);
+  const [pastSpeakers, setPastSpeakers] = useState([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -308,20 +531,49 @@ export default function Admin() {
   }, []);
 
   const fetchData = async () => {
-    const [membersRes, eventsRes, rsvpsRes] = await Promise.all([
+    const [membersRes, eventsRes, rsvpsRes, speakersRes] = await Promise.all([
       supabase.from('members').select('*').order('created_at', { ascending: false }),
       supabase.from('club_events').select('*').order('date', { ascending: true }),
       supabase.from('event_rsvps').select('*').order('created_at', { ascending: false }),
+      supabase.from('past_speakers').select('*').order('event_date', { ascending: false }),
     ]);
     setMembers(membersRes.data ?? []);
     setEvents(eventsRes.data ?? []);
     setEventRsvps(rsvpsRes.data ?? []);
+    setPastSpeakers(speakersRes.data ?? []);
     setLoading(false);
   };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/');
+  };
+
+  const deleteMember = async (id) => {
+    await supabase.from('members').delete().eq('id', id);
+    setMembers((prev) => prev.filter((m) => m.id !== id));
+  };
+
+  const addEvent = async (payload) => {
+    const { data, error } = await supabase.from('club_events').insert(payload).select().single();
+    if (error) throw error;
+    setEvents((prev) => [...prev, data].sort((a, b) => (a.date ?? '').localeCompare(b.date ?? '')));
+  };
+
+  const deleteEvent = async (id) => {
+    await supabase.from('club_events').delete().eq('id', id);
+    setEvents((prev) => prev.filter((e) => e.id !== id));
+  };
+
+  const addArchiveSpeaker = async (payload) => {
+    const { data, error } = await supabase.from('past_speakers').insert(payload).select().single();
+    if (error) throw error;
+    setPastSpeakers((prev) => [data, ...prev]);
+  };
+
+  const deleteArchiveSpeaker = async (id) => {
+    await supabase.from('past_speakers').delete().eq('id', id);
+    setPastSpeakers((prev) => prev.filter((s) => s.id !== id));
   };
 
   if (loading) {
@@ -358,37 +610,32 @@ export default function Admin() {
         {/* Stats */}
         <div>
           <p className="font-dm-sans text-white/40 text-xs uppercase tracking-[0.2em] mb-5">Overview</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <StatCard label="Club Members" value={members.length} icon={Users} />
             <StatCard label="Event RSVPs" value={eventRsvps.length} icon={CalendarCheck} />
             <StatCard label="Upcoming Events" value={events.length} icon={ClipboardList} />
+            <StatCard label="Archive Speakers" value={pastSpeakers.length} icon={Archive} />
           </div>
         </div>
 
         {/* Members */}
         <div className="border-t border-white/10 pt-12">
-          <MembersTable
-            members={members}
-            onDelete={(id) => setMembers((prev) => prev.filter((m) => m.id !== id))}
-          />
+          <MembersTable members={members} onDelete={deleteMember} />
         </div>
 
-        {/* Events + RSVPs */}
+        {/* Events */}
         <div className="border-t border-white/10 pt-12">
-          <div className="flex items-center justify-between mb-6">
-            <div />
-            <CreateEventForm
-              onCreated={(ev) => setEvents((prev) => [...prev, ev].sort((a, b) => new Date(a.date) - new Date(b.date)))}
-            />
-          </div>
-          <EventRsvpsTable
-            eventRsvps={eventRsvps}
-            events={events}
-            onDeleteEvent={(id) => {
-              setEvents((prev) => prev.filter((e) => e.id !== id));
-              setEventRsvps((prev) => prev.filter((r) => r.event_id !== id));
-            }}
-          />
+          <EventsManager events={events} onAdd={addEvent} onDelete={deleteEvent} />
+        </div>
+
+        {/* Event RSVPs */}
+        <div className="border-t border-white/10 pt-12">
+          <EventRsvpsTable eventRsvps={eventRsvps} events={events} />
+        </div>
+
+        {/* Archive Speakers */}
+        <div className="border-t border-white/10 pt-12">
+          <ArchiveSpeakersSection speakers={pastSpeakers} onAdd={addArchiveSpeaker} onDelete={deleteArchiveSpeaker} />
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import FadeIn from './FadeIn';
 export default function ClosingCTA() {
   const handleAttend = (e) => {
     e.preventDefault();
-    document.getElementById('attend')?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('speakers')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (

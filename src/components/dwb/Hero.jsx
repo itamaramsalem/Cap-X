@@ -9,11 +9,11 @@ export default function Hero() {
 
   const handleAttend = (e) => {
     e.preventDefault();
-    const el = document.getElementById('attend');
+    const el = document.getElementById('speakers');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     } else {
-      navigate('/#attend');
+      navigate('/#speakers');
     }
   };
 
