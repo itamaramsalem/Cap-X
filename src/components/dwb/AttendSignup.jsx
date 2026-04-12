@@ -1,5 +1,4 @@
 import FadeIn from './FadeIn';
-import { Link } from 'react-router-dom';
 import { CalendarCheck } from 'lucide-react';
 
 export default function AttendSignup() {
@@ -31,10 +30,10 @@ export default function AttendSignup() {
           <FadeIn>
             <div className="text-center">
               <CalendarCheck size={36} className="text-gold mx-auto mb-5" />
-              <p className="font-playfair text-white text-2xl font-bold mb-3">Sessions Coming Fall 2026</p>
+              <p className="font-playfair text-white text-2xl font-bold mb-1">Session 01 — May 1, 2025</p>
+              <p className="font-dm-sans text-gold text-sm font-semibold mb-3">Marcus Rivera · Goldman Sachs</p>
               <p className="font-dm-sans text-white/50 text-sm max-w-xs mx-auto mb-8">
-                RSVP buttons will appear on each speaker card once a session is confirmed.
-                Check the schedule above, or join the club to be notified first.
+                Seats are limited. RSVP now to secure your spot at the first Cap-X session.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a
@@ -42,14 +41,15 @@ export default function AttendSignup() {
                   onClick={scrollToSpeakers}
                   className="w-full sm:w-auto bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-7 py-4 hover:bg-gold-dark transition-colors text-center"
                 >
-                  View Schedule
+                  Reserve My Seat
                 </a>
-                <Link
-                  to="/join"
+                <a
+                  href="#schedule"
+                  onClick={(e) => { e.preventDefault(); document.getElementById('schedule')?.scrollIntoView({ behavior: 'smooth' }); }}
                   className="w-full sm:w-auto border border-white/20 text-white font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-7 py-4 hover:border-white/40 transition-colors text-center"
                 >
-                  Join the Club
-                </Link>
+                  View Calendar
+                </a>
               </div>
             </div>
           </FadeIn>

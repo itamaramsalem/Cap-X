@@ -30,8 +30,8 @@ export default function EventCalendar() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const { data: events = [] } = useQuery({
-    queryKey: ['club_events', 'upcoming'],
-    queryFn: () => base44.entities.ClubEvent.filter({ status: 'upcoming' }, 'date'),
+    queryKey: ['club_events'],
+    queryFn: () => base44.entities.ClubEvent.list('date', 100),
   });
 
   const monthStart = startOfMonth(currentMonth);
