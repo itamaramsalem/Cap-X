@@ -1,11 +1,85 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../api/apiClient';
 import { SPEAKERS } from '../lib/speakers';
 import {
   LogOut, Users, CalendarCheck, ClipboardList, ChevronDown, ChevronUp,
-  Trash2, Plus, X, Archive, Download, RefreshCw, Image,
+  Trash2, Plus, X, Archive, Download, RefreshCw, Image, Upload,
 } from 'lucide-react';
+
+// ──────────────────────────────────────────────
+// Image upload component (Supabase Storage)
+// ──────────────────────────────────────────────
+function ImageUpload({ currentUrl, onUpload, size = 'md' }) {
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const inputRef = useRef(null);
+
+  const avatarSize = size === 'sm' ? 'w-10 h-10' : 'w-16 h-16';
+
+  const handleChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('Max file size is 5 MB.');
+      return;
+    }
+
+    setUploading(true);
+    setUploadError('');
+
+    const ext = file.name.split('.').pop().toLowerCase();
+    const path = `speakers/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+    const { error: storageErr } = await supabase.storage
+      .from('photos')
+      .upload(path, file, { cacheControl: '3600', upsert: false });
+
+    if (storageErr) {
+      setUploadError(
+        storageErr.message.includes('Bucket not found')
+          ? 'Storage bucket not set up. Run fix-schema.sql in Supabase first.'
+          : storageErr.message
+      );
+      setUploading(false);
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from('photos').getPublicUrl(path);
+    onUpload(publicUrl);
+    setUploading(false);
+    // Reset input so the same file can be re-selected
+    if (inputRef.current) inputRef.current.value = '';
+  };
+
+  return (
+    <div className="flex items-center gap-4">
+      {currentUrl ? (
+        <img src={currentUrl} alt="" className={`${avatarSize} rounded-full object-cover shrink-0 border border-white/20`} />
+      ) : (
+        <div className={`${avatarSize} rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/15`}>
+          <Image size={size === 'sm' ? 14 : 20} className="text-white/30" />
+        </div>
+      )}
+      <div>
+        <label className="flex items-center gap-2 cursor-pointer bg-navy-light border border-white/15 hover:border-gold text-white/50 hover:text-gold font-dm-sans text-xs uppercase tracking-[0.1em] px-4 py-2 transition-colors">
+          <Upload size={12} />
+          {uploading ? 'Uploading…' : currentUrl ? 'Change Photo' : 'Upload Photo'}
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={handleChange}
+            className="hidden"
+            disabled={uploading}
+          />
+        </label>
+        {uploadError && <p className="font-dm-sans text-red-400 text-xs mt-1">{uploadError}</p>}
+      </div>
+    </div>
+  );
+}
 
 // ──────────────────────────────────────────────
 // CSV export helper
@@ -382,25 +456,18 @@ function EventRsvpsTable({ eventRsvps, events }) {
 // Speaker photos (upcoming speakers)
 // ──────────────────────────────────────────────
 function SpeakerPhotosSection({ overrides, onSave }) {
-  const [urls, setUrls] = useState({});
-  const [saving, setSaving] = useState(null);
-  const [saved, setSaved] = useState(null);
+  // Track per-speaker photo URLs from uploads
+  const [localUrls, setLocalUrls] = useState({});
 
   useEffect(() => {
     const init = {};
     SPEAKERS.forEach(s => { init[s.id] = overrides[s.id] ?? ''; });
-    setUrls(init);
+    setLocalUrls(init);
   }, [overrides]);
 
-  const handleSave = async (speakerId) => {
-    setSaving(speakerId);
-    try {
-      await onSave(speakerId, urls[speakerId]);
-      setSaved(speakerId);
-      setTimeout(() => setSaved(null), 2000);
-    } finally {
-      setSaving(null);
-    }
+  const handleUpload = async (speakerId, publicUrl) => {
+    setLocalUrls(u => ({ ...u, [speakerId]: publicUrl }));
+    await onSave(speakerId, publicUrl);
   };
 
   return (
@@ -409,28 +476,22 @@ function SpeakerPhotosSection({ overrides, onSave }) {
         <Image size={18} className="text-gold" />
         <h2 className="font-playfair text-white text-2xl font-bold">Upcoming Speaker Photos</h2>
       </div>
-      <p className="font-dm-sans text-white/40 text-xs mb-5">Paste a public image URL to set a speaker's photo. Leave blank to use initials.</p>
+      <p className="font-dm-sans text-white/40 text-xs mb-5">
+        Upload a photo for each upcoming speaker. JPEG, PNG or WebP, max 5 MB.
+      </p>
 
       <div className="space-y-3">
         {SPEAKERS.map(s => (
-          <div key={s.id} className="border border-white/10 px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3">
-            <div className="shrink-0 w-40">
+          <div key={s.id} className="border border-white/10 px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-5">
+            <div className="shrink-0 w-44">
               <p className="font-dm-sans text-white text-sm font-medium">{s.name}</p>
-              <p className="font-dm-sans text-white/40 text-xs">{s.title}</p>
+              <p className="font-dm-sans text-white/40 text-xs mt-0.5">{s.title}</p>
             </div>
-            <input
-              value={urls[s.id] ?? ''}
-              onChange={e => setUrls(u => ({ ...u, [s.id]: e.target.value }))}
-              placeholder="https://..."
-              className="flex-1 bg-navy border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors"
+            <ImageUpload
+              currentUrl={localUrls[s.id] || ''}
+              onUpload={(url) => handleUpload(s.id, url)}
+              size="sm"
             />
-            <button
-              onClick={() => handleSave(s.id)}
-              disabled={saving === s.id}
-              className="shrink-0 bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.1em] px-4 py-2 hover:bg-gold-dark transition-colors disabled:opacity-60"
-            >
-              {saving === s.id ? 'Saving…' : saved === s.id ? 'Saved ✓' : 'Save'}
-            </button>
           </div>
         ))}
       </div>
@@ -528,9 +589,13 @@ function ArchiveSpeakersSection({ speakers, onAdd, onDelete }) {
               <input value={form.linkedin} onChange={set('linkedin')} placeholder="linkedin.com/in/..." className="w-full bg-navy-light border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors" />
             </div>
           </div>
-          <div>
-            <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Photo URL</label>
-            <input value={form.photo_url} onChange={set('photo_url')} placeholder="https://..." className="w-full bg-navy-light border border-white/15 text-white placeholder-white/25 font-dm-sans text-sm px-3 py-2 focus:outline-none focus:border-gold transition-colors" />
+          <div className="sm:col-span-2">
+            <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-2">Photo</label>
+            <ImageUpload
+              currentUrl={form.photo_url}
+              onUpload={(url) => setForm(f => ({ ...f, photo_url: url }))}
+              size="md"
+            />
           </div>
           <div>
             <label className="font-dm-sans text-white/50 text-xs uppercase tracking-[0.12em] block mb-1.5">Bio</label>

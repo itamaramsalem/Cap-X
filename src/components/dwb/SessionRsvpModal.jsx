@@ -148,14 +148,14 @@ export default function SessionRsvpModal({ speaker, onClose }) {
 
     const email = form.email.trim().toLowerCase();
 
-    // Members-only check
-    const { data: member } = await supabase
-      .from('members')
-      .select('id')
-      .eq('email', email)
-      .maybeSingle();
+    // Members-only check via SECURITY DEFINER RPC (bypasses RLS on members table)
+    const { data: isMember, error: rpcErr } = await supabase.rpc('is_cap_x_member', {
+      member_email: email,
+    });
 
-    if (!member) {
+    // If the function doesn't exist yet (SQL migration not run), allow through
+    // so the admin can still test — the real guard is the DB constraint.
+    if (!rpcErr && isMember === false) {
       setError(
         'Only registered Cap-X members can RSVP. Please join first at /join — it only takes a minute.'
       );

@@ -1,13 +1,90 @@
 -- ─────────────────────────────────────────────────────────────────
---  Cap-X — Fix schema & seed data
+--  Cap-X — Fix schema, seed data, and storage
 --
 --  Run this in: Supabase Dashboard → SQL Editor → New Query
 --  Safe to run multiple times (all statements are idempotent).
+--
+--  After running, go to:
+--  Settings → API → "Reload schema cache" (if tables still not found)
 -- ─────────────────────────────────────────────────────────────────
 
 
 -- ═══════════════════════════════════════════════════════════════
---  1. FIX event_rsvps — add missing columns
+--  1. CREATE past_speakers table  ← moved to top so it can't be
+--     blocked by failures in other sections
+-- ═══════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS past_speakers (
+  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name        text NOT NULL,
+  title       text,
+  company     text,
+  sector      text,
+  event_date  date,
+  bio         text,
+  linkedin    text,
+  photo_url   text,
+  created_at  timestamptz DEFAULT now()
+);
+
+ALTER TABLE past_speakers ENABLE ROW LEVEL SECURITY;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='past_speakers' AND policyname='Public can read past speakers') THEN
+    CREATE POLICY "Public can read past speakers" ON past_speakers FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='past_speakers' AND policyname='Admins can manage past speakers') THEN
+    CREATE POLICY "Admins can manage past speakers" ON past_speakers FOR ALL TO authenticated USING (true) WITH CHECK (true);
+  END IF;
+END $$;
+
+
+-- ═══════════════════════════════════════════════════════════════
+--  2. CREATE speaker_photos table (photo overrides for upcoming speakers)
+-- ═══════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS speaker_photos (
+  speaker_id  text PRIMARY KEY,
+  photo_url   text,
+  updated_at  timestamptz DEFAULT now()
+);
+
+ALTER TABLE speaker_photos ENABLE ROW LEVEL SECURITY;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='speaker_photos' AND policyname='Public can read speaker photos') THEN
+    CREATE POLICY "Public can read speaker photos" ON speaker_photos FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='speaker_photos' AND policyname='Admins can manage speaker photos') THEN
+    CREATE POLICY "Admins can manage speaker photos" ON speaker_photos FOR ALL TO authenticated USING (true) WITH CHECK (true);
+  END IF;
+END $$;
+
+
+-- ═══════════════════════════════════════════════════════════════
+--  3. CREATE is_cap_x_member() — SECURITY DEFINER so anon users
+--     can check membership without a SELECT policy on members
+-- ═══════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION is_cap_x_member(member_email text)
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM members WHERE lower(email) = lower(member_email)
+  );
+$$;
+
+GRANT EXECUTE ON FUNCTION is_cap_x_member TO anon;
+GRANT EXECUTE ON FUNCTION is_cap_x_member TO authenticated;
+
+
+-- ═══════════════════════════════════════════════════════════════
+--  4. FIX event_rsvps — add missing columns
 -- ═══════════════════════════════════════════════════════════════
 
 ALTER TABLE event_rsvps ADD COLUMN IF NOT EXISTS first_name text;
@@ -36,8 +113,8 @@ BEGIN
   END IF;
 END $$;
 
--- RLS for event_rsvps
 ALTER TABLE event_rsvps ENABLE ROW LEVEL SECURITY;
+
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='event_rsvps' AND policyname='Anyone can RSVP to a session') THEN
@@ -50,7 +127,7 @@ END $$;
 
 
 -- ═══════════════════════════════════════════════════════════════
---  2. FIX club_events — add optional columns used by admin panel
+--  5. FIX club_events — add optional columns
 -- ═══════════════════════════════════════════════════════════════
 
 ALTER TABLE club_events ADD COLUMN IF NOT EXISTS speaker     text;
@@ -58,8 +135,8 @@ ALTER TABLE club_events ADD COLUMN IF NOT EXISTS location    text;
 ALTER TABLE club_events ADD COLUMN IF NOT EXISTS capacity    integer;
 ALTER TABLE club_events ADD COLUMN IF NOT EXISTS description text;
 
--- RLS for club_events
 ALTER TABLE club_events ENABLE ROW LEVEL SECURITY;
+
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='club_events' AND policyname='Public can read events') THEN
@@ -78,10 +155,11 @@ END $$;
 
 
 -- ═══════════════════════════════════════════════════════════════
---  3. FIX members — allow admins to delete members
+--  6. FIX members — allow admins to delete
 -- ═══════════════════════════════════════════════════════════════
 
 ALTER TABLE members ENABLE ROW LEVEL SECURITY;
+
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='members' AND policyname='Admins can delete members') THEN
@@ -91,60 +169,48 @@ END $$;
 
 
 -- ═══════════════════════════════════════════════════════════════
---  4. CREATE past_speakers table (for the Archive page)
+--  7. STORAGE — create 'photos' bucket for image uploads
 -- ═══════════════════════════════════════════════════════════════
 
-CREATE TABLE IF NOT EXISTS past_speakers (
-  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  name        text NOT NULL,
-  title       text,
-  company     text,
-  sector      text,
-  event_date  date,
-  bio         text,
-  linkedin    text,
-  photo_url   text,
-  created_at  timestamptz DEFAULT now()
-);
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'photos',
+  'photos',
+  true,
+  5242880,  -- 5 MB
+  ARRAY['image/jpeg','image/png','image/webp','image/gif']
+)
+ON CONFLICT (id) DO NOTHING;
 
-ALTER TABLE past_speakers ENABLE ROW LEVEL SECURITY;
+-- Allow anyone to read photos
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='past_speakers' AND policyname='Public can read past speakers') THEN
-    CREATE POLICY "Public can read past speakers" ON past_speakers FOR SELECT USING (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname = 'Public photo read'
+  ) THEN
+    CREATE POLICY "Public photo read" ON storage.objects
+      FOR SELECT USING (bucket_id = 'photos');
   END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='past_speakers' AND policyname='Admins can manage past speakers') THEN
-    CREATE POLICY "Admins can manage past speakers" ON past_speakers FOR ALL TO authenticated USING (true) WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname = 'Admins can upload photos'
+  ) THEN
+    CREATE POLICY "Admins can upload photos" ON storage.objects
+      FOR INSERT TO authenticated WITH CHECK (bucket_id = 'photos');
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname = 'Admins can delete photos'
+  ) THEN
+    CREATE POLICY "Admins can delete photos" ON storage.objects
+      FOR DELETE TO authenticated USING (bucket_id = 'photos');
   END IF;
 END $$;
 
 
 -- ═══════════════════════════════════════════════════════════════
---  5. CREATE speaker_photos table (admin-uploaded photos for upcoming speakers)
--- ═══════════════════════════════════════════════════════════════
-
-CREATE TABLE IF NOT EXISTS speaker_photos (
-  speaker_id  text PRIMARY KEY,
-  photo_url   text,
-  updated_at  timestamptz DEFAULT now()
-);
-
-ALTER TABLE speaker_photos ENABLE ROW LEVEL SECURITY;
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='speaker_photos' AND policyname='Public can read speaker photos') THEN
-    CREATE POLICY "Public can read speaker photos" ON speaker_photos FOR SELECT USING (true);
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='speaker_photos' AND policyname='Admins can manage speaker photos') THEN
-    CREATE POLICY "Admins can manage speaker photos" ON speaker_photos FOR ALL TO authenticated USING (true) WITH CHECK (true);
-  END IF;
-END $$;
-
-
--- ═══════════════════════════════════════════════════════════════
---  6. SEED Session 01 event into club_events
---     UUID must match SESSION_01_EVENT_ID in src/lib/speakers.js
---     Date updated to 2026-05-01 (upcoming)
+--  8. SEED Session 01 event (date: 2026-05-01)
 -- ═══════════════════════════════════════════════════════════════
 
 INSERT INTO club_events (id, title, speaker, date, location, sector, capacity)
