@@ -9,7 +9,6 @@ import Sectors from '../components/dwb/Sectors';
 import EventCalendar from '../components/dwb/EventCalendar';
 import SpeakerSchedule from '../components/dwb/SpeakerSchedule';
 import NewsletterSignup from '../components/dwb/NewsletterSignup';
-import ClosingCTA from '../components/dwb/ClosingCTA';
 import Footer from '../components/dwb/Footer';
 
 export default function Home() {
@@ -34,7 +33,6 @@ export default function Home() {
       {/* id="schedule" is on the section inside EventCalendar */}
       <EventCalendar />
       <NewsletterSignup />
-      <ClosingCTA />
       <Footer />
     </div>
   );
