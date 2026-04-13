@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/dwb/Navbar';
 import Footer from '../components/dwb/Footer';
 import FadeIn from '../components/dwb/FadeIn';
@@ -161,6 +161,8 @@ function confirmationEmail({ first_name, last_name, email, netid, major, graduat
 }
 
 export default function Join() {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   const [form, setForm] = useState({
     first_name: '',
     last_name: '',

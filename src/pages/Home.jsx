@@ -4,7 +4,6 @@ import Hero from '../components/dwb/Hero';
 import StatsBar from '../components/dwb/StatsBar';
 import WhyCap from '../components/dwb/WhyCap';
 import HowItWorks from '../components/dwb/HowItWorks';
-import StudentGains from '../components/dwb/StudentGains';
 import Sectors from '../components/dwb/Sectors';
 import EventCalendar from '../components/dwb/EventCalendar';
 import SpeakerSchedule from '../components/dwb/SpeakerSchedule';
@@ -19,12 +18,10 @@ export default function Home() {
       <Navbar />
       <Hero />
       <StatsBar />
-      {/* WHY CAP-X — between stats bar and How It Works */}
+      {/* id="why-come" — merged Why Cap-X + What You Gain */}
       <WhyCap />
       {/* id="format" is on the section inside HowItWorks */}
       <HowItWorks />
-      {/* id="why-come" is on the section inside StudentGains */}
-      <StudentGains />
       {/* id="sectors" is on the section inside Sectors */}
       <Sectors />
       {/* id="speakers" wrapper */}

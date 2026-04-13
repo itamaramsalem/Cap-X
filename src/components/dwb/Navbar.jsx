@@ -210,10 +210,10 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* JOIN CTA */}
+        {/* Join button */}
         <Link
           to="/join"
-          className="hidden md:inline-block ml-6 bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-4 py-2 hover:bg-gold-dark transition-colors"
+          className="hidden md:inline-flex items-center ml-4 bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-4 py-2 hover:bg-gold-dark transition-colors"
         >
           Join
         </Link>
@@ -251,9 +251,9 @@ export default function Navbar() {
               <Link
                 to="/join"
                 onClick={() => setOpen(false)}
-                className="inline-block bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-4 py-2.5 text-center hover:bg-gold-dark transition-colors"
+                className="inline-flex items-center justify-center bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-4 py-3 hover:bg-gold-dark transition-colors"
               >
-                Join
+                Join the Club
               </Link>
               {[...LEFT_LINKS, ...RIGHT_LINKS].flatMap((link) =>
                 link.submenu
