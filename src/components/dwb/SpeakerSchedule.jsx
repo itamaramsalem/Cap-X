@@ -8,9 +8,10 @@ import { supabase } from '../../api/apiClient';
 import { format, parseISO } from 'date-fns';
 
 export default function SpeakerSchedule() {
-  const [profileSpeaker, setProfileSpeaker] = useState(null); // card click → profile
-  const [rsvpSpeaker, setRsvpSpeaker] = useState(null);       // RSVP button → signup
+  const [profileSpeaker, setProfileSpeaker] = useState(null);
+  const [rsvpSpeaker, setRsvpSpeaker] = useState(null);
   const [rsvpCounts, setRsvpCounts] = useState({});
+  const [photoOverrides, setPhotoOverrides] = useState({});
 
   useEffect(() => {
     const eventIds = SPEAKERS.filter(s => s.event_id).map(s => s.event_id);
@@ -29,6 +30,16 @@ export default function SpeakerSchedule() {
       results.forEach(({ event_id, count }) => { counts[event_id] = count; });
       setRsvpCounts(counts);
     });
+
+    // Fetch admin-uploaded speaker photo overrides
+    supabase
+      .from('speaker_photos')
+      .select('*')
+      .then(({ data }) => {
+        const map = {};
+        (data ?? []).forEach(p => { map[p.speaker_id] = p.photo_url; });
+        setPhotoOverrides(map);
+      });
   }, []);
 
   const seatsLeftFor = (speaker) => {
@@ -51,18 +62,19 @@ export default function SpeakerSchedule() {
             {SPEAKERS.map((speaker, i) => {
               const seatsLeft = seatsLeftFor(speaker);
               const isFull = seatsLeft === 0;
+              const photo = photoOverrides[speaker.id] || speaker.photo;
 
               return (
                 <div
                   key={speaker.id}
                   className="border border-border rounded-lg p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 hover:shadow-sm transition-shadow cursor-pointer"
-                  onClick={() => setProfileSpeaker(speaker)}
+                  onClick={() => setProfileSpeaker({ ...speaker, photo })}
                 >
                   {/* Left: avatar + name */}
                   <div className="flex items-center gap-4">
-                    {speaker.photo ? (
+                    {photo ? (
                       <img
-                        src={speaker.photo}
+                        src={photo}
                         alt={speaker.name}
                         className="w-14 h-14 rounded-full object-cover shrink-0"
                       />
@@ -102,7 +114,7 @@ export default function SpeakerSchedule() {
                     </div>
 
                     <button
-                      onClick={(e) => { e.stopPropagation(); setRsvpSpeaker(speaker); }}
+                      onClick={(e) => { e.stopPropagation(); setRsvpSpeaker({ ...speaker, photo }); }}
                       disabled={isFull}
                       className="bg-gold text-navy font-dm-sans font-semibold text-xs uppercase tracking-wider px-4 py-2 hover:bg-gold-dark transition-colors whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
                     >
@@ -113,7 +125,6 @@ export default function SpeakerSchedule() {
               );
             })}
 
-            {/* Coming soon footer */}
             <div className="border border-dashed border-navy/15 rounded-lg p-5 text-center">
               <p className="font-dm-sans text-navy/40 text-sm">
                 More sessions announced on a rolling basis — check back soon.
@@ -123,7 +134,6 @@ export default function SpeakerSchedule() {
         </FadeIn>
       </div>
 
-      {/* Profile modal — card click */}
       {profileSpeaker && (
         <SpeakerProfileModal
           speaker={profileSpeaker}
@@ -136,7 +146,6 @@ export default function SpeakerSchedule() {
         />
       )}
 
-      {/* RSVP modal — RSVP button or profile CTA */}
       {rsvpSpeaker && (
         <SessionRsvpModal
           speaker={rsvpSpeaker}

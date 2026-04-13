@@ -14,16 +14,10 @@ const RIGHT_LINKS = [
   { to: '/#format', label: 'FORMAT', anchor: 'format' },
   { to: '/#why-come', label: 'WHY COME', anchor: 'why-come' },
   { to: '/#sectors', label: 'SECTORS', anchor: 'sectors' },
-  {
-    to: '/#attend', label: 'ATTEND', anchor: 'attend',
-    submenu: [
-      { label: 'Upcoming Events', anchor: 'speakers' },
-      { label: 'Calendar of Events', anchor: 'schedule' },
-    ],
-  },
+  { to: '/#speakers', label: 'ATTEND', anchor: 'speakers' },
 ];
 
-const ALL_ANCHORS = ['speakers', 'format', 'why-come', 'sectors', 'attend'];
+const ALL_ANCHORS = ['speakers', 'format', 'why-come', 'sectors'];
 
 function NavLink({ to, label, anchor, onClick, activeSection, isPathActive }) {
   const navigate = useNavigate();
@@ -206,22 +200,14 @@ export default function Navbar() {
 
         {/* Right links */}
         <div className="hidden md:flex items-center gap-6">
-          {RIGHT_LINKS.map((link) =>
-            link.submenu ? (
-              <AttendDropdown
-                key={link.label}
-                link={link}
-                activeSection={activeSection}
-              />
-            ) : (
-              <NavLink
-                key={link.label}
-                {...link}
-                activeSection={activeSection}
-                isPathActive={location.pathname === link.to}
-              />
-            )
-          )}
+          {RIGHT_LINKS.map((link) => (
+            <NavLink
+              key={link.label}
+              {...link}
+              activeSection={activeSection}
+              isPathActive={location.pathname === link.to}
+            />
+          ))}
         </div>
 
         {/* JOIN CTA */}

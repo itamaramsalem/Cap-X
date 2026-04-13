@@ -23,18 +23,18 @@ export default function Contact() {
 
       <div style={{ paddingTop: 'calc(var(--bar-h, 0px) + 56px)' }}>
         {/* Hero section */}
-        <section className="bg-navy px-8 md:px-16 py-24">
+        <section className="bg-navy px-8 md:px-16 py-16">
           <div className="max-w-7xl mx-auto">
             <FadeIn>
-              <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-5">Get in Touch</p>
-              <h1 className="font-playfair text-white text-5xl md:text-6xl font-bold mb-6">Contact Us</h1>
-              <p className="font-dm-sans text-white/55 text-base leading-relaxed max-w-xl mb-14">
+              <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-4">Get in Touch</p>
+              <h1 className="font-playfair text-white text-5xl md:text-6xl font-bold mb-4">Contact Us</h1>
+              <p className="font-dm-sans text-white/55 text-base leading-relaxed max-w-xl mb-10">
                 Have a question, want to speak at a session, or just want to connect?
                 Reach out — we'd love to hear from you.
               </p>
 
               {/* Contact cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-24">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-0">
                 {CONTACT_INFO.map(({ icon: Icon, label, value, href }) => (
                   <a
                     key={label}
@@ -54,11 +54,11 @@ export default function Contact() {
         </section>
 
         {/* Leadership section */}
-        <section className="bg-navy border-t border-white/10 px-8 md:px-16 py-20">
+        <section className="bg-navy border-t border-white/10 px-8 md:px-16 py-14">
           <div className="max-w-7xl mx-auto">
             <FadeIn>
               <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-4">Leadership</p>
-              <h2 className="font-playfair text-white text-4xl font-bold mb-12">Our Team</h2>
+              <h2 className="font-playfair text-white text-4xl font-bold mb-8">Our Team</h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {TEAM.map(({ name, role, email, initial, photo, photoPosition }) => (

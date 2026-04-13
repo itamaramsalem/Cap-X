@@ -12,7 +12,7 @@ export const SPEAKERS = [
     name: 'Marcus Rivera',
     title: 'Vice President · Goldman Sachs',
     sector: 'Finance & Trading',
-    date: '2025-05-01',
+    date: '2026-05-01',
     location: 'Rutgers Business School, Room 204',
     capacity: 50,
     bio: "Marcus Rivera is a Vice President in Goldman Sachs' Investment Banking Division, where he leads M&A advisory mandates across the industrials and consumer sectors. A first-generation college graduate, Marcus built his career through persistence, strategic networking, and a relentless focus on the fundamentals. He'll speak candidly about breaking into Wall Street, navigating the culture, and the decisions that shaped his trajectory.",

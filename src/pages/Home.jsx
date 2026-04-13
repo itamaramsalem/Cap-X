@@ -8,7 +8,6 @@ import StudentGains from '../components/dwb/StudentGains';
 import Sectors from '../components/dwb/Sectors';
 import EventCalendar from '../components/dwb/EventCalendar';
 import SpeakerSchedule from '../components/dwb/SpeakerSchedule';
-import AttendSignup from '../components/dwb/AttendSignup';
 import NewsletterSignup from '../components/dwb/NewsletterSignup';
 import ClosingCTA from '../components/dwb/ClosingCTA';
 import Footer from '../components/dwb/Footer';
@@ -34,8 +33,6 @@ export default function Home() {
       </div>
       {/* id="schedule" is on the section inside EventCalendar */}
       <EventCalendar />
-      {/* id="attend" is on the section inside AttendSignup */}
-      <AttendSignup />
       <NewsletterSignup />
       <ClosingCTA />
       <Footer />

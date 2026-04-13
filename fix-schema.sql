@@ -120,8 +120,31 @@ END $$;
 
 
 -- ═══════════════════════════════════════════════════════════════
---  5. SEED Session 01 event into club_events
+--  5. CREATE speaker_photos table (admin-uploaded photos for upcoming speakers)
+-- ═══════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS speaker_photos (
+  speaker_id  text PRIMARY KEY,
+  photo_url   text,
+  updated_at  timestamptz DEFAULT now()
+);
+
+ALTER TABLE speaker_photos ENABLE ROW LEVEL SECURITY;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='speaker_photos' AND policyname='Public can read speaker photos') THEN
+    CREATE POLICY "Public can read speaker photos" ON speaker_photos FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='speaker_photos' AND policyname='Admins can manage speaker photos') THEN
+    CREATE POLICY "Admins can manage speaker photos" ON speaker_photos FOR ALL TO authenticated USING (true) WITH CHECK (true);
+  END IF;
+END $$;
+
+
+-- ═══════════════════════════════════════════════════════════════
+--  6. SEED Session 01 event into club_events
 --     UUID must match SESSION_01_EVENT_ID in src/lib/speakers.js
+--     Date updated to 2026-05-01 (upcoming)
 -- ═══════════════════════════════════════════════════════════════
 
 INSERT INTO club_events (id, title, speaker, date, location, sector, capacity)
@@ -129,9 +152,9 @@ VALUES (
   'c9d8e7f6-a5b4-4c3d-8291-0f1e2d3c4b5a',
   'Session 01 — Marcus Rivera · Goldman Sachs',
   'Marcus Rivera',
-  '2025-05-01',
+  '2026-05-01',
   'Rutgers Business School, Room 204',
   'Finance & Trading',
   50
 )
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET date = '2026-05-01';
