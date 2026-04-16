@@ -6,6 +6,7 @@ import WhyCap from '../components/dwb/WhyCap';
 import HowItWorks from '../components/dwb/HowItWorks';
 import Sectors from '../components/dwb/Sectors';
 import EventCalendar from '../components/dwb/EventCalendar';
+import WorkforceStats from '../components/dwb/WorkforceStats';
 import SpeakerSchedule from '../components/dwb/SpeakerSchedule';
 import NewsletterSignup from '../components/dwb/NewsletterSignup';
 import ClosingCTA from '../components/dwb/ClosingCTA';
@@ -18,6 +19,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <StatsBar />
+      <WorkforceStats />
       {/* id="why-come" — merged Why Cap-X + What You Gain */}
       <WhyCap />
       {/* id="format" is on the section inside HowItWorks */}
