@@ -6,14 +6,11 @@ import { supabase } from '../../api/apiClient';
 
 const LEFT_LINKS = [
   { to: '/#speakers', label: 'SPEAKERS', anchor: 'speakers' },
-  { to: '/archive', label: 'ARCHIVE' },
 ];
 
 const RIGHT_LINKS = [
   { to: '/contact', label: 'CONTACT' },
-  { to: '/#format', label: 'FORMAT', anchor: 'format' },
   { to: '/#why-come', label: 'WHY COME', anchor: 'why-come' },
-  { to: '/#sectors', label: 'SECTORS', anchor: 'sectors' },
   {
     to: '/#speakers', label: 'ATTEND', anchor: 'speakers',
     submenu: [
@@ -23,7 +20,7 @@ const RIGHT_LINKS = [
   },
 ];
 
-const ALL_ANCHORS = ['speakers', 'format', 'why-come', 'sectors'];
+const ALL_ANCHORS = ['speakers', 'why-come'];
 
 function NavLink({ to, label, anchor, onClick, activeSection, isPathActive }) {
   const navigate = useNavigate();

@@ -3,19 +3,19 @@ import Marquee from './Marquee';
 
 // Split into two rows for the double-marquee effect
 const ROW_1 = [
-  'Finance & Trading',
-  'Consulting',
-  'Entrepreneurship',
-  'Technology & AI',
-  'Marketing & Brand',
+  'Finance & Economics',
+  'Business Administration',
+  'Computer Science',
+  'Supply Chain Management',
+  'Marketing & Communications',
 ];
 
 const ROW_2 = [
-  'Wealth Management',
-  'Private Equity',
-  'Real Estate',
-  'Startups & Venture',
-  'Operations & Supply Chain',
+  'Accounting',
+  'Information Technology',
+  'Management',
+  'Statistics & Data Science',
+  'Political Science & Pre-Law',
 ];
 
 function SectorPill({ label }) {
@@ -32,9 +32,9 @@ export default function Sectors() {
       <div className="max-w-7xl mx-auto px-8 md:px-16 mb-14">
         <FadeIn>
           <h2 className="font-playfair text-white text-3xl md:text-5xl font-bold max-w-3xl leading-tight">
-            Every sector of the business world —{' '}
+            Built for Rutgers students —{' '}
             <em className="text-gold" style={{ fontStyle: 'italic' }}>
-              one conversation at a time.
+              whatever you're studying.
             </em>
           </h2>
         </FadeIn>

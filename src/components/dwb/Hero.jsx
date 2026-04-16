@@ -73,13 +73,14 @@ export default function Hero() {
             {/* Left — headline + content */}
             <div className="max-w-2xl">
               <h2 className="font-playfair text-white text-3xl md:text-5xl font-bold leading-tight mb-6">
-                Where Students Meet{' '}
-                <em className="text-gold" style={{ fontStyle: 'italic' }}>Industry Leaders</em>
+                The club that connects students with{' '}
+                <em className="text-gold" style={{ fontStyle: 'italic' }}>real industry professionals.</em>
               </h2>
 
               <p className="font-dm-sans text-white/55 text-base max-w-xl mb-10 leading-relaxed">
-                Cap-X connects ambitious students with senior professionals across finance, tech,
-                consulting, and entrepreneurship — through intimate speaker series and curated networking.
+                Cap-X is a place where ambitious Rutgers students sit down with executives, founders,
+                and professionals for real conversations — the kind that change how you think about
+                your career.
               </p>
 
               <div className="flex items-center gap-6 flex-wrap">

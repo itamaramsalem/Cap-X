@@ -78,20 +78,9 @@ export default function WhyCap() {
           </h2>
           <div className="space-y-6 mb-12 max-w-4xl">
             <p className="font-dm-sans text-muted-text text-base leading-relaxed">
-              At Cap X, you get access to people most students never hear from. Entrepreneurs, executives,
-              and professionals come in and talk about what they actually went through, the risks they took,
-              what failed, and what finally worked after years of figuring it out. You are not just listening,
-              you are putting yourself in the room with people and opportunities that most people never get near.
-            </p>
-            <p className="font-dm-sans text-muted-text text-base leading-relaxed">
-              What happens next is completely up to you. You can sit there and just listen, or you can use it
-              to change how you think, who you talk to, and what you go after. We are only opening the door,
-              whether you walk through it or not is on you.
-            </p>
-            <p className="font-dm-sans text-muted-text text-base leading-relaxed">
-              The goal is simple. One conversation can push someone to take action, start something, learn
-              something new, or reach out to someone they would have never approached before. That moment is
-              there, but only for the people who decide to show up and take it seriously.
+              Cap-X is changing this. We bring executives, founders, and professionals into the room
+              and let students ask them anything — the real questions, the ones professors can't answer.
+              One conversation with the right person can shift your entire trajectory.
             </p>
           </div>
           <motion.a

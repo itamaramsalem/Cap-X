@@ -3,11 +3,10 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import FadeIn from './FadeIn';
 
 const TIMELINE = [
-  { tag: 'Pre-Event', label: 'Speaker Profile Released', detail: 'A speaker profile drops 2 weeks before the session so you can come prepared with real questions.' },
-  { tag: '0–5 Min',  label: 'Welcome & Introduction',  detail: "The host sets the stage and gives context on the speaker's background and career path." },
-  { tag: '5–35 Min', label: 'Moderated Interview',     detail: 'A candid, interview-style conversation — their journey, decisions, mistakes, and lessons.' },
-  { tag: '35–50 Min',label: 'Open Q&A',                detail: 'Students ask questions directly. No topic is off limits.' },
-  { tag: '50–70 Min',label: 'Networking Window*',      detail: 'One-on-one time with the speaker — direct access for those who want it.' },
+  { tag: 'Pre-Event',  label: 'Speaker Profile Released', detail: 'A speaker profile drops 2 weeks before the session so you can come prepared with real questions.' },
+  { tag: '30 Min',     label: 'Moderated Interview',      detail: 'A candid, unscripted conversation — their career, decisions, failures, and what actually worked. You hear what they\'d never put in a LinkedIn post.' },
+  { tag: '20 Min',     label: 'Open Q&A',                 detail: 'You ask directly. No pre-screened questions, no filters. Students have challenged, pushed back, and had their thinking completely flipped.' },
+  { tag: '20 Min',     label: 'Networking Window*',       detail: 'One-on-one time with the speaker — direct access for those who want it.' },
 ];
 
 function Rocket({ sectionRef }) {
@@ -120,7 +119,7 @@ export default function HowItWorks() {
         <FadeIn>
           <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-5">How It Works</p>
           <h2 className="font-playfair text-navy text-4xl md:text-5xl font-bold mb-10 leading-tight">
-            A real conversation.<br />Not a presentation.
+            Ask, challenge, interact.<br />Not just listen.
           </h2>
         </FadeIn>
 
