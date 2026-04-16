@@ -1,16 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../api/apiClient';
 import FadeIn from './FadeIn';
 
 export default function Hero() {
   const navigate = useNavigate();
-  const { scrollY } = useScroll();
-  const gridY    = useTransform(scrollY, [0, 700], [0, 140]);
-  const blob1Y   = useTransform(scrollY, [0, 700], [0, 200]);
-  const blob2Y   = useTransform(scrollY, [0, 700], [0, 80]);
-  const contentY = useTransform(scrollY, [0, 700], [0, -80]);
 
   const handleAttend = (e) => {
     e.preventDefault();
@@ -41,26 +36,19 @@ export default function Hero() {
       className="min-h-screen bg-navy flex items-center px-8 md:px-16 relative overflow-hidden"
       style={{ paddingTop: 'calc(var(--bar-h, 0px) + 56px)' }}
     >
-      {/* ── Background layers (parallax) ── */}
-      <motion.div
+      {/* ── Background layers ── */}
+      <div
         className="absolute inset-0 pointer-events-none opacity-[0.045]"
         style={{
           backgroundImage: 'radial-gradient(circle, rgba(201,168,76,1) 1px, transparent 1px)',
           backgroundSize: '40px 40px',
-          y: gridY,
         }}
       />
-      <motion.div
-        className="absolute -top-60 -right-60 w-[700px] h-[700px] rounded-full bg-gold opacity-[0.07] blur-[130px] pointer-events-none"
-        style={{ y: blob1Y }}
-      />
-      <motion.div
-        className="absolute bottom-0 -left-40 w-[400px] h-[400px] rounded-full bg-gold opacity-[0.04] blur-[80px] pointer-events-none"
-        style={{ y: blob2Y }}
-      />
+      <div className="absolute -top-60 -right-60 w-[700px] h-[700px] rounded-full bg-gold opacity-[0.07] blur-[130px] pointer-events-none" />
+      <div className="absolute bottom-0 -left-40 w-[400px] h-[400px] rounded-full bg-gold opacity-[0.04] blur-[80px] pointer-events-none" />
 
-      {/* ── Content (parallax — moves up faster than bg) ── */}
-      <motion.div className="w-full max-w-7xl mx-auto relative" style={{ y: contentY }}>
+      {/* ── Content ── */}
+      <div className="w-full max-w-7xl mx-auto relative">
 
         {/* Large "Cap-X" — desktop only */}
         <FadeIn>
@@ -127,7 +115,7 @@ export default function Hero() {
             </div>
           </div>
         </FadeIn>
-      </motion.div>
+      </div>
 
       {/* ── Scroll indicator ── */}
       <motion.div
