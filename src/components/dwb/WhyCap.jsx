@@ -28,30 +28,25 @@ const GAINS = [
   },
 ];
 
-// Cards alternate: left / right / up across the 3-column grid
-const CARD_DIRECTIONS = ['left', 'up', 'right', 'right', 'up', 'left'];
-
 const containerVariants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } },
+  visible: { transition: { staggerChildren: 0.08 } },
 };
 
-function FlipCard({ title, body, direction = 'up' }) {
-  const initial = direction === 'left'  ? { opacity: 0, x: -50 }
-                : direction === 'right' ? { opacity: 0, x: 50 }
-                :                         { opacity: 0, y: 40 };
-  const visible = direction === 'left'  ? { opacity: 1, x: 0 }
-                : direction === 'right' ? { opacity: 1, x: 0 }
-                :                         { opacity: 1, y: 0 };
+const cardVariants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+};
 
+function FlipCard({ title, body }) {
   return (
-    <motion.div
-      variants={{ hidden: initial, visible: { ...visible, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } } }}
-      className="h-48 group"
-      style={{ perspective: '1200px' }}
-    >
+    <motion.div variants={cardVariants} className="h-48 group" style={{ perspective: '1200px' }}>
       <div
-        className="relative w-full h-full [transform-style:preserve-3d] [transition:transform_0.65s_ease] group-hover:[transform:rotateY(180deg)]"
+        className="relative w-full h-full [transform-style:preserve-3d] [transition:transform_0.6s_ease] group-hover:[transform:rotateY(180deg)]"
         style={{ willChange: 'transform' }}
       >
         <div className="absolute inset-0 bg-navy flex items-center justify-center p-7 border border-white/10 [backface-visibility:hidden]">
@@ -75,20 +70,12 @@ export default function WhyCap() {
     <section id="why-come" className="bg-cream py-24 px-8 md:px-16 border-t border-navy/10">
       <div className="max-w-7xl mx-auto">
 
-        {/* Label — slides in from left */}
-        <FadeIn direction="left">
+        {/* Why Cap-X narrative */}
+        <FadeIn>
           <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-5">Why Cap-X</p>
-        </FadeIn>
-
-        {/* Headline — slides in from left, slightly delayed */}
-        <FadeIn direction="left" delay={0.05}>
           <h2 className="font-playfair text-navy text-3xl md:text-5xl font-bold leading-tight mb-10 max-w-4xl">
             Most students graduate without ever having a real conversation with someone who built something.
           </h2>
-        </FadeIn>
-
-        {/* Body paragraphs — slide in from right */}
-        <FadeIn direction="right" delay={0.1}>
           <div className="space-y-6 mb-12 max-w-4xl">
             <p className="font-dm-sans text-muted-text text-base leading-relaxed">
               At Cap X, you get access to people most students never hear from. Entrepreneurs, executives,
@@ -107,10 +94,6 @@ export default function WhyCap() {
               there, but only for the people who decide to show up and take it seriously.
             </p>
           </div>
-        </FadeIn>
-
-        {/* CTA — scale in */}
-        <FadeIn direction="scale" delay={0.15}>
           <motion.a
             href="/#speakers"
             onClick={handleAttend}
@@ -123,15 +106,13 @@ export default function WhyCap() {
           </motion.a>
         </FadeIn>
 
-        {/* "What You Stand to Gain" heading */}
-        <FadeIn direction="left">
+        {/* What You Stand to Gain — flip cards */}
+        <FadeIn>
           <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-4">For Students</p>
           <h2 className="font-playfair text-navy text-4xl md:text-5xl font-bold mb-14 leading-tight">
             What You Stand to Gain.
           </h2>
         </FadeIn>
-
-        {/* Cards — alternate left/up/right */}
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           variants={containerVariants}
@@ -139,8 +120,8 @@ export default function WhyCap() {
           whileInView="visible"
           viewport={{ once: true, margin: '-60px' }}
         >
-          {GAINS.map(({ title, body }, i) => (
-            <FlipCard key={title} title={title} body={body} direction={CARD_DIRECTIONS[i]} />
+          {GAINS.map(({ title, body }) => (
+            <FlipCard key={title} title={title} body={body} />
           ))}
         </motion.div>
 
