@@ -78,9 +78,9 @@ export default function Hero() {
               </h2>
 
               <p className="font-dm-sans text-white/55 text-base max-w-xl mb-10 leading-relaxed">
-                Cap-X is a place where ambitious Rutgers students sit down with executives, founders,
-                and professionals for real conversations — the kind that change how you think about
-                your career.
+                50 seats. Real access. No application. Cap-X puts you in the same room as
+                executives, founders, and investors — for unfiltered conversations you won't
+                find in any classroom.
               </p>
 
               <div className="flex items-center gap-6 flex-wrap">

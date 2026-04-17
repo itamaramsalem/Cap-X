@@ -74,7 +74,7 @@ export default function WhyCap() {
         <FadeIn>
           <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-5">Why Cap-X</p>
           <h2 className="font-playfair text-navy text-3xl md:text-5xl font-bold leading-tight mb-10 max-w-4xl">
-            Most students graduate without ever having a real conversation with someone who built something.
+            Most students graduate without ever having a real conversation with someone who actually built something. Don't be most students.
           </h2>
           <div className="space-y-6 mb-12 max-w-4xl">
             <p className="font-dm-sans text-muted-text text-base leading-relaxed">

@@ -15,10 +15,11 @@ export default function NewsletterSignup() {
     <section className="bg-cream py-16 px-8 md:px-16 border-t border-navy/10">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
         <FadeIn>
-          <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-3">Newsletter</p>
-          <h3 className="font-playfair text-navy text-3xl font-bold mb-3">Stay in the loop.</h3>
+          <p className="font-dm-sans text-gold text-xs uppercase tracking-[0.2em] mb-3">Don't Miss Out</p>
+          <h3 className="font-playfair text-navy text-3xl font-bold mb-3">Sessions fill fast. Be first.</h3>
           <p className="font-dm-sans text-muted-text text-sm leading-relaxed">
-            Get speaker announcements, session recaps, and event reminders — straight to your inbox.
+            Get notified the moment a new session drops — before 50 seats are gone.
+            Speaker profiles, event details, and early access straight to your inbox.
           </p>
         </FadeIn>
         <FadeIn delay={0.1}>
@@ -38,7 +39,7 @@ export default function NewsletterSignup() {
                 type="submit"
                 className="bg-navy text-white font-dm-sans font-semibold text-xs uppercase tracking-[0.15em] px-6 py-3 hover:bg-navy-light transition-colors whitespace-nowrap"
               >
-                Subscribe
+                Notify Me
               </button>
             </form>
           )}

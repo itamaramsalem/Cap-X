@@ -29,10 +29,10 @@ function CountUp({ target, duration = 1400, suffix = '' }) {
 }
 
 const STATS = [
-  { value: 'Bi-Weekly', label: 'Session Frequency', isNumber: false },
+  { numericTarget: 50, suffix: '', label: 'Seats Per Session', isNumber: true },
+  { value: 'Free', label: 'Always · No Exceptions', isNumber: false },
   { value: 'Open', label: 'No Application · Any Major', isNumber: false },
-  { numericTarget: 7, suffix: '+', label: 'Business Sectors', isNumber: true },
-  { value: 'Coming Soon', label: 'Workshops & Skill Sessions', isNumber: false },
+  { value: 'Bi-Weekly', label: 'Sessions Per Semester', isNumber: false },
 ];
 
 export default function StatsBar() {
